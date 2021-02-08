@@ -87,6 +87,40 @@ extract() {
     tar -zxf "$archive" --strip-components 1 -C "$outputDir"
 }
 
+download() {
+  url="$1"
+  output="$2"
+
+  info "url: ${url}"
+
+  if command_exists curl; then
+    curl -LsSo "$output" "$url" >/dev/null 2>&1
+    return $?
+  elif command_exists wget; then
+    wget -qO "$output" "$url" >/dev/null 2>&1
+    return $?
+  fi
+
+  return 1
+}
+
+download_dotfiles() {
+  info "Downloading and extracting archive..."
+  tmpFile=""
+  tmpFile="$(mktemp /tmp/XXXXX)"
+  download "$DOTFILES_TARBALL_URL" "$tmpFile"
+
+  # Add in verification to move a current .dotfiles directory
+  # to a backup and install fresh
+  [ ! -d "${DOTFILES_HOME_DIR}" ] && mkdir "$DOTFILES_HOME_DIR"
+
+  info "Extracting archive"
+  extract "$tmpFile" "$DOTFILES_HOME_DIR"
+  success "Extracted archive"
+  cd "$DOTFILES_HOME_DIR"
+  info "Current working directory: $(pwd -P)"
+}
+
 install_xcode_cli_tools() {
   info "Checking for Xcode Command Line Tools..."
 
@@ -115,14 +149,16 @@ install_xcode_cli_tools() {
 install_homebrew() {
   info "Checking for Homebrew..."
 
-  if ! command_exists brew; then
+  if command_exists brew; then
+    info "Homebrew already installed."
+  else
     info "Installing Homebrew..."
     printf "\n" |
       /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
     success "Installed Homebrew"
   fi
 
-	brew update
+  brew update
   brew upgrade
   success "Updated Homebrew"
 }
@@ -136,6 +172,7 @@ main() {
   info "MacOS SW Build: ${SW_BUILD}"
   install_xcode_cli_tools "$@"
   install_homebrew "$@"
+  download_dotfiles "$@"
 }
 
 main "$@"
