@@ -27,7 +27,7 @@ ${_GREEN_BOLD}
       | \__ \ || (_) | (_) | |_) / /
      _/ |___/\__\___/ \___/|_.__/___|
     |__/
-  By James Stephens (jstoobz)
+        By James Stephens (jstoobz)
 ${_RESET}
 EOF
 }
@@ -181,8 +181,8 @@ main() {
   info "MacOS SW Build: ${SW_BUILD}"
   install_xcode_cli_tools "$@"
   install_homebrew "$@"
-  install_brew_formulae_and_casks "$@"
   download_dotfiles "$@"
+  install_brew_formulae_and_casks "$@"
 }
 
 main "$@"
