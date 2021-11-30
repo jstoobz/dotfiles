@@ -27,8 +27,8 @@ ${_GREEN_BOLD}
       | \__ \ || (_) | (_) | |_) / /
      _/ |___/\__\___/ \___/|_.__/___|
     |__/
-	By James Stephens (jstoobz)
-${_RESET}	
+  By James Stephens (jstoobz)
+${_RESET}
 EOF
 }
 
@@ -142,7 +142,10 @@ install_xcode_cli_tools() {
     tail -n1)
 
   softwareupdate -i "${CLT_PACKAGE}"
-  rm -rf "${CLT_PLACEHOLDER}"
+
+  info "Removing temp file..."
+  [ -f "${CLT_PLACEHOLDER}" ] && rm -rf "${CLT_PLACEHOLDER}"
+
   success "Installed Xcode"
 }
 
@@ -163,6 +166,12 @@ install_homebrew() {
   success "Updated Homebrew"
 }
 
+install_brew_formulae_and_casks() {
+  info "Installing brew formulae and casks"
+  ./brew.sh
+  success "Installed brew formulae and casks"
+}
+
 main() {
   ask_for_sudo "$@"
   clr_screen "$@"
@@ -172,6 +181,7 @@ main() {
   info "MacOS SW Build: ${SW_BUILD}"
   install_xcode_cli_tools "$@"
   install_homebrew "$@"
+  install_brew_formulae_and_casks "$@"
   download_dotfiles "$@"
 }
 
