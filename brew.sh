@@ -28,7 +28,7 @@ brew install jq
 brew install httpie
 brew install m-cli
 brew install git
-brew install github/gh/gh
+brew install gh
 brew install hub
 brew install diff-so-fancy
 brew install shellcheck
@@ -42,14 +42,14 @@ brew install mas
 brew install zsh
 brew install zsh-completions
 brew install zsh-autosuggestions
-brew install zshsyntax-highlighting
+brew install zsh-syntax-highlighting
 brew install bash
-brew install bash-completion2
+brew install bash-completion@2
 brew install terminal-notifier
 
 brew install base64
 brew install autoconf
-brew install wxmac
+brew install wxwidgets
 brew install openssl
 brew install automake
 brew install libyaml
@@ -86,7 +86,7 @@ brew install --cask flux
 brew install --cask brave-browser
 brew install --cask google-chrome
 brew install --cask firefox
-brew install --cask torbrowser
+brew install --cask tor-browser
 brew install --cask telegram
 brew install --cask discord
 brew install --cask slack
