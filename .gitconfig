@@ -1,0 +1,12 @@
+[user]
+	name = James Stephens
+	email = your.email@example.com
+[credential]
+	helper = osxkeychain
+[core]
+	editor = code --wait
+	autocrlf = false
+	excludesfile = /Users/__USERNAME__/.gitignore
+	eol = lf
+[init]
+	defaultBranch = main
