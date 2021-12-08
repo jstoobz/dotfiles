@@ -1,3 +1,8 @@
+#!/bin/sh
+
+brew update
+brew upgrade
+
 # Formulae
 
 brew install coreutils
@@ -13,6 +18,11 @@ brew install nano
 brew install wget
 brew install curl
 brew install unzip
+brew install gzip
+brew install unar
+brew install grep
+brew install rsync
+brew install cmake
 
 brew install ack
 brew install bat
@@ -21,20 +31,41 @@ brew install exa
 brew install fd
 brew install ripgrep
 brew install fzf
+brew install hyperfine
+brew install xsv
+brew install viu
+brew install ncdu
 brew install gnupg
-brew install gpg
+brew install pinentry-mac
+brew install gnuplot
 brew install htop
 brew install jq
+brew install yq
+brew install pv
+brew install peco
 brew install httpie
 brew install m-cli
+brew install ctags
 brew install git
+brew install git-lfs
+brew install git-delta
 brew install gh
 brew install hub
+brew install tig
 brew install diff-so-fancy
+brew install the_silver_searcher
+brew install hexyl
 brew install shellcheck
 brew install shfmt
-brew install tldr
+brew install watchman
+brew install editorconfig
+brew install tealdeer
 brew install tree
+brew install pstree
+brew install tokei
+brew install fdupes
+brew install direnv
+brew install telnet
 brew install vim
 brew install tmux
 brew install reattach-to-user-namespace
@@ -46,12 +77,15 @@ brew install zsh-syntax-highlighting
 brew install bash
 brew install bash-completion@2
 brew install terminal-notifier
+brew install awscli
 
 brew install base64
 brew install autoconf
+brew install automake
 brew install wxwidgets
 brew install openssl
-brew install automake
+brew install openssh
+brew install ssh-copy-id
 brew install libyaml
 brew install readline
 brew install libxslt
@@ -62,26 +96,36 @@ brew install xz
 brew install zlib
 
 brew install asdf
-brew install postgres
+brew install postgresql
 brew install pgcli
+brew install pgformatter
 
 brew install yasm
 brew install x264
 brew install lame
 brew install xvid
 brew install ffmpeg
+brew install ffmpegthumbnailer
 brew install exiftool
 brew install imagemagick
 brew install imageoptim-cli
 brew install figlet
 brew install asciinema
 brew install youtube-dl
+brew install transmission
+brew install pdfgrep
+brew install speedtest-cli
+brew install graphviz
+brew install nmap
+brew install mitmproxy
 
 ## Casks
 
 brew install --cask alacritty
 brew install --cask rectangle
 brew install --cask visual-studio-code
+brew install --cask appcleaner
+brew install --cask the-unarchiver
 brew install --cask flux
 brew install --cask brave-browser
 brew install --cask google-chrome
@@ -90,7 +134,7 @@ brew install --cask tor-browser
 brew install --cask telegram
 brew install --cask discord
 brew install --cask slack
-brew install --cask zoom
+brew install --cask zoomus
 brew install --cask vlc
 brew install --cask plex
 brew install --cask transmission
@@ -99,3 +143,5 @@ brew install --cask parallels
 brew install --cask parallels-toolbox
 brew install --cask pgadmin4
 brew install --cask graphql-playground
+
+brew cleanup
