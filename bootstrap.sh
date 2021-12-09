@@ -189,6 +189,17 @@ install_brew_formulae_and_casks() {
   success "Installed brew formulae and casks"
 }
 
+install_oh_my_zsh() {
+  [ -d "${HOME}/.oh-my-zsh" ] && {
+    info "Oh my zsh already installed."
+    return
+  }
+
+  info "Installing oh my zsh"
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  success "Installed oh my zsh"
+}
+
 main() {
   ask_for_sudo "$@"
   clr_screen "$@"
@@ -201,6 +212,7 @@ main() {
   install_homebrew "$@"
   download_dotfiles "$@"
   install_brew_formulae_and_casks "$@"
+  install_oh_my_zsh "$@"
 }
 
 main "$@"
