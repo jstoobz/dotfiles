@@ -200,6 +200,59 @@ install_oh_my_zsh() {
   success "Installed oh my zsh"
 }
 
+configure_asdf() {
+  ## Erlang
+  info "Installing asdf plugin for erlang"
+  asdf plugin add erlang
+
+  info "Installing erlang"
+  asdf install erlang latest
+  success "Installed erlang"
+
+  info "Setting asdf global version for erlang"
+  asdf global erlang "$(asdf latest erlang)"
+
+  ## Elixir
+
+  info "Installing asdf plugin for elixir"
+  asdf plugin add elixir
+
+  info "Installing elixir"
+  asdf install elixir latest
+  success "Installed elixir"
+
+  info "Setting asdf global version for elixir"
+  asdf global elixir "$(asdf latest elixir)"
+
+  ## Nodejs
+
+  info "Installing asdf plugin for nodejs"
+  asdf plugin add nodejs
+
+  info "Installing nodejs"
+  asdf install nodejs latest
+  success "Installed nodejs"
+
+  info "Setting asdf global version for nodejs"
+  asdf global nodejs "$(asdf latest nodejs)"
+
+  info "Importing Node.js release team's OpenPGP keys to the keyring"
+  bash -c "${ASDF_DATA_DIR:=$HOME/.asdf}/plugins/nodejs/bin/import-release-team-keyring"
+
+  ## Hex, rebar, and mix archive for hex phx_new
+
+  info "Installing hex"
+  mix local.hex --if-missing --force
+
+  info "Installing rebar"
+  mix local.rebar --if-missing --force
+
+  info "Installing mix archive for hex phx_new"
+  mix archive.install hex phx_new
+
+  success "Configured ASDF and relevant plugins"
+}
+
 main() {
   ask_for_sudo "$@"
   clr_screen "$@"
@@ -213,6 +266,7 @@ main() {
   download_dotfiles "$@"
   install_brew_formulae_and_casks "$@"
   install_oh_my_zsh "$@"
+  configure_asdf "$@"
 }
 
 main "$@"
