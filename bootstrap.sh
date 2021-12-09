@@ -253,6 +253,13 @@ configure_asdf() {
   success "Configured ASDF and relevant plugins"
 }
 
+configure_postgres() {
+  info "Starting postgresql and creating default postgres user"
+  brew services start postgresql
+  createuser -s postgres
+  success "Started postgresql and created default postgres user"
+}
+
 main() {
   ask_for_sudo "$@"
   clr_screen "$@"
@@ -267,6 +274,7 @@ main() {
   install_brew_formulae_and_casks "$@"
   install_oh_my_zsh "$@"
   configure_asdf "$@"
+  configure_postgres "$@"
 }
 
 main "$@"
