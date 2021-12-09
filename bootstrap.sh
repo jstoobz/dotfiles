@@ -104,21 +104,21 @@ download() {
   return 1
 }
 
-download_dotfiles() {
-  info "Downloading and extracting archive..."
-  tmpFile=""
-  tmpFile="$(mktemp /tmp/XXXXX)"
-  download "$DOTFILES_TARBALL_URL" "$tmpFile"
+symlink() {
+  if [ -e "${HOME}/$1" ]; then
+    info "Already exists: $file"
+  else
+    ln -sf "${DOTFILES_HOME_DIR}/$1" "${HOME}/$1"
+    info "Create the symbolic link: $1"
+  fi
+}
 
-  # Add in verification to move a current .dotfiles directory
-  # to a backup and install fresh
-  [ ! -d "${DOTFILES_HOME_DIR}" ] && mkdir "$DOTFILES_HOME_DIR"
-
-  info "Extracting archive"
-  extract "$tmpFile" "$DOTFILES_HOME_DIR"
-  success "Extracted archive"
-  cd "$DOTFILES_HOME_DIR"
-  info "Current working directory: $(pwd -P)"
+create_symlinks() {
+  symlink ".gitconfig"
+  symlink ".gitignore"
+  symlink ".editorconfig"
+  symlink ".hushlogin"
+  symlink ".zshrc"
 }
 
 install_xcode_cli_tools() {
@@ -166,6 +166,23 @@ install_homebrew() {
   success "Updated Homebrew"
 }
 
+download_dotfiles() {
+  info "Downloading and extracting archive..."
+  tmpFile=""
+  tmpFile="$(mktemp /tmp/XXXXX)"
+  download "$DOTFILES_TARBALL_URL" "$tmpFile"
+
+  # Add in verification to move a current .dotfiles directory
+  # to a backup and install fresh
+  [ ! -d "${DOTFILES_HOME_DIR}" ] && mkdir "$DOTFILES_HOME_DIR"
+
+  info "Extracting archive"
+  extract "$tmpFile" "$DOTFILES_HOME_DIR"
+  success "Extracted archive"
+  cd "$DOTFILES_HOME_DIR"
+  info "Current working directory: $(pwd -P)"
+}
+
 install_brew_formulae_and_casks() {
   info "Installing brew formulae and casks"
   ./brew.sh
@@ -179,6 +196,7 @@ main() {
   banner "$@"
   info "MacOS Version: ${OSX_VERS}"
   info "MacOS SW Build: ${SW_BUILD}"
+  create_symlinks "$@"
   install_xcode_cli_tools "$@"
   install_homebrew "$@"
   download_dotfiles "$@"
