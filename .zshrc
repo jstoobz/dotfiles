@@ -8,6 +8,8 @@ DISABLE_AUTO_UPDATE="true"
 
 plugins=(git)
 
+FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+
 source $ZSH/oh-my-zsh.sh
 
 export LC_ALL=en_US.UTF-8
@@ -29,6 +31,7 @@ setopt GLOB_COMPLETE
 setopt AUTO_CD
 
 export EDITOR=vim
+export TERM=xterm-256color
 
 export PAGER="less"
 export MANPAGER="less -X"
