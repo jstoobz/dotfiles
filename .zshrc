@@ -42,7 +42,6 @@ export KERL_BUILD_DOCS="yes"
 export KERL_INSTALL_HTMLDOCS="yes"
 export KERL_INSTALL_MANPAGES="yes"
 
-
 . $(brew --prefix asdf)/libexec/asdf.sh
 
 . $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
