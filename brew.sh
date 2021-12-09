@@ -112,7 +112,7 @@ brew install imageoptim-cli
 brew install figlet
 brew install asciinema
 brew install youtube-dl
-brew install transmission
+brew install transmission-cli
 brew install pdfgrep
 brew install speedtest-cli
 brew install graphviz
@@ -134,7 +134,7 @@ brew install --cask tor-browser
 brew install --cask telegram
 brew install --cask discord
 brew install --cask slack
-brew install --cask zoomus
+brew install --cask zoom
 brew install --cask vlc
 brew install --cask plex
 brew install --cask transmission
