@@ -106,28 +106,32 @@ download() {
 
 symlink() {
   if [ -e "${HOME}/$1" ]; then
-    info "Already exists: $file"
+    info "Already exists: $1"
   else
     ln -sf "${DOTFILES_HOME_DIR}/$1" "${HOME}/$1"
-    info "Create the symbolic link: $1"
+    success "Created the symlink for: $1"
   fi
 }
 
 create_symlinks() {
+  info "Settings up symlinks for config files"
+
   symlink ".gitconfig"
   symlink ".gitignore"
   symlink ".editorconfig"
   symlink ".hushlogin"
   symlink ".zshrc"
+
+  success "Symlinked all config files"
 }
 
 install_xcode_cli_tools() {
   info "Checking for Xcode Command Line Tools..."
 
-  if [ -f "/Library/Developer/CommandLineTools/usr/bin/git" ]; then
+  [ -f "/Library/Developer/CommandLineTools/usr/bin/git" ] && {
     success "Xcode Command Line Tools already installed"
     return
-  fi
+  }
 
   info "Installing the Xcode Command Line Tools:"
 
@@ -196,12 +200,11 @@ install_oh_my_zsh() {
   }
 
   info "Installing oh my zsh"
-  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
   success "Installed oh my zsh"
 }
 
 configure_asdf() {
-  ## Erlang
   info "Installing asdf plugin for erlang"
   asdf plugin add erlang
 
@@ -249,8 +252,6 @@ configure_asdf() {
 
   info "Installing mix archive for hex phx_new"
   mix archive.install hex phx_new
-
-  success "Configured ASDF and relevant plugins"
 }
 
 configure_postgres() {
