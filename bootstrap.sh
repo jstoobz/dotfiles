@@ -207,6 +207,10 @@ install_oh_my_zsh() {
 configure_asdf() {
   info "Configuring asdf and relevant plugins"
 
+  # asdf scripts needed during nodejs install for reshim
+  # also avoiding reloading shell for .zshrc and exiting script
+  . $(brew --prefix asdf)/libexec/asdf.sh
+
   info "Installing asdf plugin for erlang, elixir, and nodejs"
   [ ! -d "$ASDF_DIR/plugins/erlang" ] && asdf plugin add erlang
   [ ! -d "$ASDF_DIR/plugins/elixir" ] && asdf plugin add elixir
