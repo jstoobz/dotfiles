@@ -205,58 +205,52 @@ install_oh_my_zsh() {
 }
 
 configure_asdf() {
-  info "Installing asdf plugin for erlang"
-  asdf plugin add erlang
+  info "Configuring asdf and relevant plugins"
 
-  info "Installing erlang"
+  info "Installing asdf plugin for erlang, elixir, and nodejs"
+  [ ! -d "$ASDF_DIR/plugins/erlang" ] && asdf plugin add erlang
+  [ ! -d "$ASDF_DIR/plugins/elixir" ] && asdf plugin add elixir
+  [ ! -d "$ASDF_DIR/plugins/nodejs" ] && asdf plugin add nodejs
+  success "asdf plugins added for erlang, elixir and nodejs"
+
+  info "Installing latest versions of erlang, elixir, and nodejs"
   asdf install erlang latest
-  success "Installed erlang"
-
-  info "Setting asdf global version for erlang"
-  asdf global erlang "$(asdf latest erlang)"
-
-  ## Elixir
-
-  info "Installing asdf plugin for elixir"
-  asdf plugin add elixir
-
-  info "Installing elixir"
   asdf install elixir latest
-  success "Installed elixir"
-
-  info "Setting asdf global version for elixir"
-  asdf global elixir "$(asdf latest elixir)"
-
-  ## Nodejs
-
-  info "Installing asdf plugin for nodejs"
-  asdf plugin add nodejs
-
-  info "Installing nodejs"
   asdf install nodejs latest
-  success "Installed nodejs"
+  success "Installed latest versions of erlang, elixir, and nodejs"
 
-  info "Setting asdf global version for nodejs"
+  info "Setting asdf global versions for erlang, elixir, and nodejs"
+  asdf global erlang "$(asdf latest erlang)"
+  asdf global elixir "$(asdf latest elixir)"
   asdf global nodejs "$(asdf latest nodejs)"
+  success "Set asdf global versions for erlang, elixir, and nodejs"
 
   info "Importing Node.js release team's OpenPGP keys to the keyring"
   bash -c "${ASDF_DATA_DIR:=$HOME/.asdf}/plugins/nodejs/bin/import-release-team-keyring"
-
-  ## Hex, rebar, and mix archive for hex phx_new
+  success "Imported Node.js release team's OpenPGP keys to the keyring"
 
   info "Installing hex"
   mix local.hex --if-missing --force
+  success "Installed hex"
 
   info "Installing rebar"
   mix local.rebar --if-missing --force
+  success "Installed rebar"
 
   info "Installing mix archive for hex phx_new"
-  mix archive.install hex phx_new
+  mix archive.install hex phx_new --force
+  success "Installed mix archive for hex phx_new"
+
+  success "Configured asdf and relevant plugins"
 }
 
 configure_postgres() {
   info "Starting postgresql and creating default postgres user"
   brew services start postgresql
+
+  # Wait until postgresql is listening on port 5432
+  while ! lsof -i :5432 >/dev/null 2>&1; do sleep 1; done
+
   createuser -s postgres
   success "Started postgresql and created default postgres user"
 }
@@ -276,6 +270,7 @@ main() {
   install_oh_my_zsh "$@"
   configure_asdf "$@"
   configure_postgres "$@"
+  success "Completed dotfile installation"
 }
 
 main "$@"
