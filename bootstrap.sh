@@ -4,7 +4,7 @@ set -e
 
 DOTFILES_ROOT=$(pwd -P)
 
-GITHUB_REPOSITORY="jstoobz/dotfiles"
+GITHUB_REPOSITORY="ostoobz/dotfiles"
 DOTFILES_TARBALL_URL="https://github.com/$GITHUB_REPOSITORY/tarball/main"
 DOTFILES_HOME_DIR="${HOME}/.dotfiles"
 
@@ -213,23 +213,26 @@ configure_asdf() {
   # also avoiding reloading shell for .zshrc and exiting script
   . $(brew --prefix asdf)/libexec/asdf.sh
 
-  info "Installing asdf plugin for erlang, elixir, and nodejs"
+  info "Installing asdf plugin for erlang, elixir, nodejs, and yarn"
   [ ! -d "$ASDF_DIR/plugins/erlang" ] && asdf plugin add erlang
   [ ! -d "$ASDF_DIR/plugins/elixir" ] && asdf plugin add elixir
   [ ! -d "$ASDF_DIR/plugins/nodejs" ] && asdf plugin add nodejs
-  success "asdf plugins added for erlang, elixir and nodejs"
+  [ ! -d "$ASDF_DIR/plugins/yarn" ] && asdf plugin add yarn
+  success "asdf plugins added for erlang, elixir, nodejs, and yarn"
 
-  info "Installing latest versions of erlang, elixir, and nodejs"
+  info "Installing latest versions of erlang, elixir, nodejs, and yarn"
   asdf install erlang latest
   asdf install elixir latest
   asdf install nodejs latest
-  success "Installed latest versions of erlang, elixir, and nodejs"
+  asdf install yarn latest
+  success "Installed latest versions of erlang, elixir, nodejs, and yarn"
 
-  info "Setting asdf global versions for erlang, elixir, and nodejs"
+  info "Setting asdf global versions for erlang, elixir, nodejs, and yarn"
   asdf global erlang "$(asdf latest erlang)"
   asdf global elixir "$(asdf latest elixir)"
   asdf global nodejs "$(asdf latest nodejs)"
-  success "Set asdf global versions for erlang, elixir, and nodejs"
+  asdf global yarn "$(asdf latest yarn)"
+  success "Set asdf global versions for erlang, elixir, nodejs, and yarn"
 
   info "Importing Node.js release team's OpenPGP keys to the keyring"
   bash -c "${ASDF_DATA_DIR:=$HOME/.asdf}/plugins/nodejs/bin/import-release-team-keyring"
