@@ -134,4 +134,7 @@ brew install --cask pgadmin4
 brew install --cask graphql-playground
 brew install --cask ngrok
 
+brew install --cask ngrok
+brew install --cask obs
+
 brew cleanup
