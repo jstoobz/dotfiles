@@ -6,7 +6,7 @@
     "command": "editor.action.insertSnippet",
     "args": {
       "langId": "elixir",
-      "name": "inspect with color"
+      "name": "inspect with color limit infinity"
     }
   },
   {

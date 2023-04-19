@@ -24,7 +24,7 @@
 	},
 	"inspect with color limit infinity": {
 		"prefix": ".inscli",
-		"body": "|> IO.inspect(label: \"${0:$TM_FILEPATH:$TM_LINE_NUMBER}\", syntax_colors: [number: :yellow, atom: :cyan, string: :green, boolean: :magenta, nil: :magenta], limit: :infinity)",
+		"body": "\n|> IO.inspect(\n\tlabel: \"${0:$TM_FILEPATH:$TM_LINE_NUMBER}\", \n\tsyntax_colors: [number: :yellow, atom: :cyan, string: :green, boolean: :magenta, nil: :magenta], \n\tlimit: :infinity\n)",
 		"description": "Adds a pipeline with a labelled `IO.inspect`, colorizes data types, and displays everything"
 	},
 	  "pipe": {
