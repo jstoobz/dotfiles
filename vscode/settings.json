@@ -1,0 +1,29 @@
+{
+  "security.workspace.trust.untrustedFiles": "open",
+  "emeraldwalk.runonsave": {
+    "commands": [
+      {
+        "cmd": "cd ${workspaceRoot} && mix format ${file}",
+        "isAsync": false,
+        "match": "\\.exs?$"
+      }
+    ]
+  },
+  "terminal.integrated.enableMultiLinePasteWarning": false,
+  "editor.tabSize": 2,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "editor.formatOnSave": true,
+  "workbench.colorTheme": "dark+(elixir)",
+  "extensions.ignoreRecommendations": true,
+  "editor.codeActionsOnSave": {},
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "terminal.integrated.scrollback": 1000000
+}

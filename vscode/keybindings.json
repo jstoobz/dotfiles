@@ -1,0 +1,11 @@
+[
+  {
+    "key": "cmd+shift+i",
+    "when": "editorTextFocus",
+    "command": "editor.action.insertSnippet",
+    "args": {
+      "langId": "elixir",
+      "name": "inspect with color limit infinity"
+    }
+  }
+]
