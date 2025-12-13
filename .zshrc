@@ -15,6 +15,8 @@ source $ZSH/oh-my-zsh.sh
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 export HOMEBREW_NO_ANALYTICS=1
 
 export HISTFILE=${ZDOTDIR:-$HOME}/.zsh_history
