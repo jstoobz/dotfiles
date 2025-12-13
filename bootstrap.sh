@@ -165,6 +165,8 @@ install_homebrew() {
     success "Installed Homebrew"
   fi
 
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+
   brew update
   brew upgrade
   success "Updated Homebrew"
