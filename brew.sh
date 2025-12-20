@@ -143,5 +143,6 @@ brew install --cask parallels
 brew install --cask parallels-toolbox
 brew install --cask pgadmin4
 brew install --cask graphql-playground
+brew install --cask ngrok
 
 brew cleanup
