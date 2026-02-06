@@ -174,3 +174,6 @@ sitemap.xml
 
 # Guardrails — private blocked patterns (not tracked)
 .guardrails
+
+# Generated from .gitconfig.template by bootstrap.sh
+.gitconfig

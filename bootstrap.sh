@@ -83,8 +83,8 @@ extract() {
   archive="$1"
   outputDir="$2"
 
-  command_exists "tar" &&
-    tar -zxf "$archive" --strip-components 1 -C "$outputDir"
+  command_exists "tar" \
+    && tar -zxf "$archive" --strip-components 1 -C "$outputDir"
 }
 
 download() {
@@ -113,6 +113,35 @@ symlink() {
   fi
 }
 
+generate_gitconfig() {
+  info "Generating .gitconfig from template"
+
+  TEMPLATE="${DOTFILES_HOME_DIR}/.gitconfig.template"
+  OUTPUT="${DOTFILES_HOME_DIR}/.gitconfig"
+
+  if [ ! -f "$TEMPLATE" ]; then
+    fail ".gitconfig.template not found"
+    return 1
+  fi
+
+  if [ -f "$OUTPUT" ]; then
+    info ".gitconfig already exists, skipping generation"
+    return
+  fi
+
+  user "Enter your Git user name:"
+  read -r git_name
+  user "Enter your Git email:"
+  read -r git_email
+
+  sed -e "s|__GIT_USER_NAME__|${git_name}|g" \
+    -e "s|__GIT_USER_EMAIL__|${git_email}|g" \
+    -e "s|__HOME_DIR__|${HOME}|g" \
+    "$TEMPLATE" >"$OUTPUT"
+
+  success "Generated .gitconfig for ${git_name} <${git_email}>"
+}
+
 create_symlinks() {
   info "Settings up symlinks for config files"
 
@@ -138,12 +167,12 @@ install_xcode_cli_tools() {
   # This temporary file prompts the 'softwareupdate' utility to list the Command Line Tools
   CLT_PLACEHOLDER="/tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress"
   touch "${CLT_PLACEHOLDER}"
-  CLT_PACKAGE=$(softwareupdate -l |
-    grep -B 1 "Command Line Tools" |
-    awk -F"*" '/^ *\*/ {print $2}' |
-    sed -e 's/^ *Label: //' -e 's/^ *//' |
-    sort -V |
-    tail -n1)
+  CLT_PACKAGE=$(softwareupdate -l \
+    | grep -B 1 "Command Line Tools" \
+    | awk -F"*" '/^ *\*/ {print $2}' \
+    | sed -e 's/^ *Label: //' -e 's/^ *//' \
+    | sort -V \
+    | tail -n1)
 
   softwareupdate -i "${CLT_PACKAGE}"
 
@@ -160,8 +189,8 @@ install_homebrew() {
     info "Homebrew already installed."
   else
     info "Installing Homebrew..."
-    printf "\n" |
-      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+    printf "\n" \
+      | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
     success "Installed Homebrew"
   fi
 
@@ -267,7 +296,7 @@ configure_postgres() {
 install_guardrails_hook() {
   info "Installing pre-commit guardrails hook"
 
-  HOOK_SRC="${DOTFILES_HOME_DIR}/claude/hooks/pre-commit"
+  HOOK_SRC="${DOTFILES_HOME_DIR}/hooks/pre-commit"
   HOOK_DST="${DOTFILES_HOME_DIR}/.git/hooks/pre-commit"
 
   if [ -f "$HOOK_SRC" ]; then
@@ -307,6 +336,7 @@ main() {
   banner "$@"
   info "MacOS Version: ${OSX_VERS}"
   info "MacOS SW Build: ${SW_BUILD}"
+  generate_gitconfig "$@"
   create_symlinks "$@"
   install_xcode_cli_tools "$@"
   install_homebrew "$@"
