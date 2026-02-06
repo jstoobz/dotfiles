@@ -27,7 +27,7 @@ brew install cmake
 brew install ack
 brew install bat
 brew install dust
-brew install exa
+brew install eza
 brew install fd
 brew install ripgrep
 brew install fzf
@@ -60,7 +60,6 @@ brew install shfmt
 brew install watchman
 brew install editorconfig
 brew install tealdeer
-brew install tree
 brew install pstree
 brew install tokei
 brew install fdupes
@@ -111,7 +110,7 @@ brew install imagemagick
 brew install imageoptim-cli
 brew install figlet
 brew install asciinema
-brew install youtube-dl
+brew install yt-dlp
 brew install transmission-cli
 brew install pdfgrep
 brew install speedtest-cli
@@ -122,6 +121,7 @@ brew install mitmproxy
 ## Casks
 
 brew install --cask alacritty
+brew install --cask ghostty
 brew install --cask rectangle
 brew install --cask visual-studio-code
 brew install --cask appcleaner
@@ -138,3 +138,4 @@ brew install --cask ngrok
 brew install --cask obs
 
 brew cleanup
+
