@@ -171,3 +171,6 @@ jspm_packages/
 .htaccess
 sitemap.xml
 **/.stoobz/
+
+# Guardrails — private blocked patterns (not tracked)
+.guardrails

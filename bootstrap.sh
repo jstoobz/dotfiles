@@ -264,6 +264,42 @@ configure_postgres() {
   success "Started postgresql and created default postgres user"
 }
 
+install_guardrails_hook() {
+  info "Installing pre-commit guardrails hook"
+
+  HOOK_SRC="${DOTFILES_HOME_DIR}/claude/hooks/pre-commit"
+  HOOK_DST="${DOTFILES_HOME_DIR}/.git/hooks/pre-commit"
+
+  if [ -f "$HOOK_SRC" ]; then
+    cp "$HOOK_SRC" "$HOOK_DST"
+    chmod +x "$HOOK_DST"
+    success "Installed pre-commit hook"
+  else
+    info "No pre-commit hook source found, skipping"
+  fi
+
+  GUARDRAILS="${DOTFILES_HOME_DIR}/.guardrails"
+  GUARDRAILS_SAMPLE="${DOTFILES_HOME_DIR}/.guardrails.sample"
+
+  if [ ! -f "$GUARDRAILS" ] && [ -f "$GUARDRAILS_SAMPLE" ]; then
+    cp "$GUARDRAILS_SAMPLE" "$GUARDRAILS"
+    info "Created .guardrails from sample — edit it to add your blocked patterns"
+  fi
+}
+
+link_claude_skills() {
+  info "Linking Claude Code skills from dotfiles"
+
+  SKILLS_LINK_SCRIPT="${DOTFILES_HOME_DIR}/claude/skills/link-skills.sh"
+
+  if [ -x "$SKILLS_LINK_SCRIPT" ]; then
+    "$SKILLS_LINK_SCRIPT" --clean
+    success "Linked Claude Code skills"
+  else
+    info "No Claude skills link script found, skipping"
+  fi
+}
+
 main() {
   ask_for_sudo "$@"
   clr_screen "$@"
@@ -279,6 +315,8 @@ main() {
   install_oh_my_zsh "$@"
   configure_asdf "$@"
   configure_postgres "$@"
+  link_claude_skills "$@"
+  install_guardrails_hook "$@"
   success "Completed dotfile installation"
 }
 

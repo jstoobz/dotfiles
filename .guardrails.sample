@@ -1,0 +1,14 @@
+# .guardrails — Blocked patterns for public dotfiles repo
+#
+# One pattern per line (extended regex, case-insensitive).
+# Lines starting with # are comments. Blank lines are ignored.
+# These patterns are checked against staged files by the pre-commit hook.
+#
+# Copy this file to .guardrails and add your own patterns:
+#   cp .guardrails.sample .guardrails
+#
+# Examples:
+# acme-corp
+# acme_internal
+# AcmeApp\.
+# secretproject
