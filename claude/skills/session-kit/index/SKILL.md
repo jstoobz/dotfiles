@@ -28,8 +28,8 @@ Find and catalog past sessions across `.stoobz/` directories.
 
 | Directory                     | Date       | Summary                         | Artifacts |
 | ----------------------------- | ---------- | ------------------------------- | --------- |
-| `ENG-22456/uat-investigation` | 2026-02-06 | Statusline + session kit skills | T R P     |
-| `ENG-22456/qa-phase`          | 2026-01-28 | QA environment profiling        | T C       |
+| `PROJ-1234/uat-investigation` | 2026-02-06 | Statusline + session kit skills | T R P     |
+| `PROJ-1234/qa-phase`          | 2026-01-28 | QA environment profiling        | T C       |
 | `memory-leaks`                | 2026-01-26 | BEAM memory investigation       | T C R     |
 
 **Legend:** T=TLDR C=Context R=Retro P=Prompt-Lab H=Handoff
