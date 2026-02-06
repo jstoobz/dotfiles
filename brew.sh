@@ -27,7 +27,7 @@ brew install cmake
 brew install ack
 brew install bat
 brew install dust
-brew install exa
+brew install eza
 brew install fd
 brew install ripgrep
 brew install fzf
@@ -60,7 +60,6 @@ brew install shfmt
 brew install watchman
 brew install editorconfig
 brew install tealdeer
-brew install tree
 brew install pstree
 brew install tokei
 brew install fdupes
@@ -111,7 +110,7 @@ brew install imagemagick
 brew install imageoptim-cli
 brew install figlet
 brew install asciinema
-brew install youtube-dl
+brew install yt-dlp
 brew install transmission-cli
 brew install pdfgrep
 brew install speedtest-cli
@@ -122,27 +121,20 @@ brew install mitmproxy
 ## Casks
 
 brew install --cask alacritty
+brew install --cask ghostty
 brew install --cask rectangle
 brew install --cask visual-studio-code
 brew install --cask appcleaner
 brew install --cask the-unarchiver
-brew install --cask flux
 brew install --cask brave-browser
-brew install --cask google-chrome
 brew install --cask firefox
-brew install --cask tor-browser
-brew install --cask telegram
-brew install --cask discord
-brew install --cask slack
-brew install --cask zoom
-brew install --cask vlc
-brew install --cask plex
-brew install --cask transmission
+brew install --cask datagrip
 brew install --cask docker
-brew install --cask parallels
-brew install --cask parallels-toolbox
 brew install --cask pgadmin4
 brew install --cask graphql-playground
 brew install --cask ngrok
+
+brew install --cask ngrok
+brew install --cask obs
 
 brew cleanup

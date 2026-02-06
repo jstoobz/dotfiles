@@ -157,6 +157,18 @@ tags
 *.tmp
 
 ################################################################################
+# Python                                                                       #
+################################################################################
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+.venv/
+.ruff_cache/
+
+################################################################################
 # Node                                                                         #
 ################################################################################
 
@@ -170,3 +182,10 @@ jspm_packages/
 
 .htaccess
 sitemap.xml
+**/.stoobz/
+
+# Guardrails — private blocked patterns (not tracked)
+.guardrails
+
+# Generated from .gitconfig.template by bootstrap.sh
+.gitconfig

@@ -7,5 +7,45 @@
       "langId": "elixir",
       "name": "inspect with color limit infinity"
     }
+  },
+  {
+    "key": "alt+left",
+    "command": "subwordNavigation.cursorSubwordLeft",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "alt+right",
+    "command": "subwordNavigation.cursorSubwordRight",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "shift+alt+left",
+    "command": "subwordNavigation.cursorSubwordLeftSelect",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "ctrl+shift+left",
+    "command": "-subwordNavigation.cursorSubwordLeftSelect",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "shift+alt+right",
+    "command": "subwordNavigation.cursorSubwordRightSelect",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "ctrl+shift+right",
+    "command": "-subwordNavigation.cursorSubwordRightSelect",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "alt+down",
+    "command": "editor.action.smartSelect.shrink",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "alt+up",
+    "command": "editor.action.smartSelect.expand",
+    "when": "editorTextFocus"
   }
 ]

@@ -1,0 +1,131 @@
+#!/bin/bash
+#
+# Pre-commit hook for public dotfiles repo
+#
+# 1. Auto-formats staged files (shfmt, prettier, ruff)
+# 2. Checks for private/work-specific content via .guardrails
+#
+# Installation:
+#   cp hooks/pre-commit .git/hooks/pre-commit
+#   chmod +x .git/hooks/pre-commit
+
+set -e
+
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
+GREEN='\033[0;32m'
+CYAN='\033[0;36m'
+RESET='\033[0m'
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+GUARDRAILS_FILE="${REPO_ROOT}/.guardrails"
+GUARDRAILS_SAMPLE="${REPO_ROOT}/.guardrails.sample"
+
+# ─── Phase 1: Auto-format staged files ───────────────────────────────────────
+
+format_staged() {
+  local formatted=0
+
+  # Collect staged files (added, copied, modified)
+  local staged
+  staged=$(git diff --cached --name-only --diff-filter=ACM)
+
+  if [ -z "$staged" ]; then
+    return
+  fi
+
+  # Shell files — shfmt
+  local sh_files
+  sh_files=$(echo "$staged" | grep -E '\.sh$' || true)
+  if [ -n "$sh_files" ] && command -v shfmt >/dev/null 2>&1; then
+    for file in $sh_files; do
+      if [ -f "$file" ]; then
+        shfmt -i 2 -ci -bn -w "$file"
+        git add "$file"
+        formatted=$((formatted + 1))
+      fi
+    done
+  fi
+
+  # Markdown + JSON — prettier
+  local pretty_files
+  pretty_files=$(echo "$staged" | grep -E '\.(md|json)$' || true)
+  if [ -n "$pretty_files" ] && command -v prettier >/dev/null 2>&1; then
+    for file in $pretty_files; do
+      if [ -f "$file" ]; then
+        prettier --write --prose-wrap preserve "$file" >/dev/null 2>&1
+        git add "$file"
+        formatted=$((formatted + 1))
+      fi
+    done
+  fi
+
+  # Python — ruff
+  local py_files
+  py_files=$(echo "$staged" | grep -E '\.py$' || true)
+  if [ -n "$py_files" ] && command -v ruff >/dev/null 2>&1; then
+    for file in $py_files; do
+      if [ -f "$file" ]; then
+        ruff format --quiet "$file"
+        git add "$file"
+        formatted=$((formatted + 1))
+      fi
+    done
+  fi
+
+  if [ "$formatted" -gt 0 ]; then
+    echo -e "  ${GREEN}fmt${RESET}   Formatted ${formatted} file(s)"
+  fi
+}
+
+format_staged
+
+# ─── Phase 2: Guardrails check ───────────────────────────────────────────────
+
+if [ ! -f "$GUARDRAILS_FILE" ]; then
+  echo -e "${YELLOW}WARNING: No .guardrails file found.${RESET}"
+  echo "  Create one with blocked patterns (one per line)."
+  if [ -f "$GUARDRAILS_SAMPLE" ]; then
+    echo "  Quick start: cp .guardrails.sample .guardrails"
+  fi
+  echo "  Skipping content check."
+  exit 0
+fi
+
+# Build pattern from .guardrails file (skip comments and blank lines)
+BLOCKED_PATTERNS=$(grep -v '^\s*#' "$GUARDRAILS_FILE" | grep -v '^\s*$' | paste -sd '|' -)
+
+if [ -z "$BLOCKED_PATTERNS" ]; then
+  exit 0
+fi
+
+# Only check staged files (not the whole repo)
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(md|sh|json|yaml|yml|toml|txt)$' || true)
+
+if [ -z "$STAGED_FILES" ]; then
+  exit 0
+fi
+
+VIOLATIONS=""
+for file in $STAGED_FILES; do
+  if [ -f "$file" ]; then
+    matches=$(grep -inE "$BLOCKED_PATTERNS" "$file" 2>/dev/null || true)
+    if [ -n "$matches" ]; then
+      VIOLATIONS="$VIOLATIONS\n  $file:\n$(echo "$matches" | sed 's/^/    /')\n"
+    fi
+  fi
+done
+
+if [ -n "$VIOLATIONS" ]; then
+  echo -e "${RED}BLOCKED: Private content detected in staged files.${RESET}"
+  echo -e "${RED}This is a public repository — patterns from .guardrails matched.${RESET}"
+  echo ""
+  echo -e "Violations:$VIOLATIONS"
+  echo "Options:"
+  echo "  1. Replace with generic placeholders (MyApp, my_app_dev, etc.)"
+  echo "  2. Move the file to a private location (not tracked by dotfiles)"
+  echo "  3. Override with: git commit --no-verify (use with caution)"
+  exit 1
+fi
+
+exit 0

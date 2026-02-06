@@ -4,7 +4,7 @@ set -e
 
 DOTFILES_ROOT=$(pwd -P)
 
-GITHUB_REPOSITORY="jstoobz/dotfiles"
+GITHUB_REPOSITORY="ostoobz/dotfiles"
 DOTFILES_TARBALL_URL="https://github.com/$GITHUB_REPOSITORY/tarball/main"
 DOTFILES_HOME_DIR="${HOME}/.dotfiles"
 
@@ -83,8 +83,8 @@ extract() {
   archive="$1"
   outputDir="$2"
 
-  command_exists "tar" &&
-    tar -zxf "$archive" --strip-components 1 -C "$outputDir"
+  command_exists "tar" \
+    && tar -zxf "$archive" --strip-components 1 -C "$outputDir"
 }
 
 download() {
@@ -113,6 +113,35 @@ symlink() {
   fi
 }
 
+generate_gitconfig() {
+  info "Generating .gitconfig from template"
+
+  TEMPLATE="${DOTFILES_HOME_DIR}/.gitconfig.template"
+  OUTPUT="${DOTFILES_HOME_DIR}/.gitconfig"
+
+  if [ ! -f "$TEMPLATE" ]; then
+    fail ".gitconfig.template not found"
+    return 1
+  fi
+
+  if [ -f "$OUTPUT" ]; then
+    info ".gitconfig already exists, skipping generation"
+    return
+  fi
+
+  user "Enter your Git user name:"
+  read -r git_name
+  user "Enter your Git email:"
+  read -r git_email
+
+  sed -e "s|__GIT_USER_NAME__|${git_name}|g" \
+    -e "s|__GIT_USER_EMAIL__|${git_email}|g" \
+    -e "s|__HOME_DIR__|${HOME}|g" \
+    "$TEMPLATE" >"$OUTPUT"
+
+  success "Generated .gitconfig for ${git_name} <${git_email}>"
+}
+
 create_symlinks() {
   info "Settings up symlinks for config files"
 
@@ -138,12 +167,12 @@ install_xcode_cli_tools() {
   # This temporary file prompts the 'softwareupdate' utility to list the Command Line Tools
   CLT_PLACEHOLDER="/tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress"
   touch "${CLT_PLACEHOLDER}"
-  CLT_PACKAGE=$(softwareupdate -l |
-    grep -B 1 "Command Line Tools" |
-    awk -F"*" '/^ *\*/ {print $2}' |
-    sed -e 's/^ *Label: //' -e 's/^ *//' |
-    sort -V |
-    tail -n1)
+  CLT_PACKAGE=$(softwareupdate -l \
+    | grep -B 1 "Command Line Tools" \
+    | awk -F"*" '/^ *\*/ {print $2}' \
+    | sed -e 's/^ *Label: //' -e 's/^ *//' \
+    | sort -V \
+    | tail -n1)
 
   softwareupdate -i "${CLT_PACKAGE}"
 
@@ -160,8 +189,8 @@ install_homebrew() {
     info "Homebrew already installed."
   else
     info "Installing Homebrew..."
-    printf "\n" |
-      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+    printf "\n" \
+      | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
     success "Installed Homebrew"
   fi
 
@@ -213,23 +242,26 @@ configure_asdf() {
   # also avoiding reloading shell for .zshrc and exiting script
   . $(brew --prefix asdf)/libexec/asdf.sh
 
-  info "Installing asdf plugin for erlang, elixir, and nodejs"
+  info "Installing asdf plugin for erlang, elixir, nodejs, and yarn"
   [ ! -d "$ASDF_DIR/plugins/erlang" ] && asdf plugin add erlang
   [ ! -d "$ASDF_DIR/plugins/elixir" ] && asdf plugin add elixir
   [ ! -d "$ASDF_DIR/plugins/nodejs" ] && asdf plugin add nodejs
-  success "asdf plugins added for erlang, elixir and nodejs"
+  [ ! -d "$ASDF_DIR/plugins/yarn" ] && asdf plugin add yarn
+  success "asdf plugins added for erlang, elixir, nodejs, and yarn"
 
-  info "Installing latest versions of erlang, elixir, and nodejs"
+  info "Installing latest versions of erlang, elixir, nodejs, and yarn"
   asdf install erlang latest
   asdf install elixir latest
   asdf install nodejs latest
-  success "Installed latest versions of erlang, elixir, and nodejs"
+  asdf install yarn latest
+  success "Installed latest versions of erlang, elixir, nodejs, and yarn"
 
-  info "Setting asdf global versions for erlang, elixir, and nodejs"
+  info "Setting asdf global versions for erlang, elixir, nodejs, and yarn"
   asdf global erlang "$(asdf latest erlang)"
   asdf global elixir "$(asdf latest elixir)"
   asdf global nodejs "$(asdf latest nodejs)"
-  success "Set asdf global versions for erlang, elixir, and nodejs"
+  asdf global yarn "$(asdf latest yarn)"
+  success "Set asdf global versions for erlang, elixir, nodejs, and yarn"
 
   info "Importing Node.js release team's OpenPGP keys to the keyring"
   bash -c "${ASDF_DATA_DIR:=$HOME/.asdf}/plugins/nodejs/bin/import-release-team-keyring"
@@ -261,6 +293,42 @@ configure_postgres() {
   success "Started postgresql and created default postgres user"
 }
 
+install_guardrails_hook() {
+  info "Installing pre-commit guardrails hook"
+
+  HOOK_SRC="${DOTFILES_HOME_DIR}/hooks/pre-commit"
+  HOOK_DST="${DOTFILES_HOME_DIR}/.git/hooks/pre-commit"
+
+  if [ -f "$HOOK_SRC" ]; then
+    cp "$HOOK_SRC" "$HOOK_DST"
+    chmod +x "$HOOK_DST"
+    success "Installed pre-commit hook"
+  else
+    info "No pre-commit hook source found, skipping"
+  fi
+
+  GUARDRAILS="${DOTFILES_HOME_DIR}/.guardrails"
+  GUARDRAILS_SAMPLE="${DOTFILES_HOME_DIR}/.guardrails.sample"
+
+  if [ ! -f "$GUARDRAILS" ] && [ -f "$GUARDRAILS_SAMPLE" ]; then
+    cp "$GUARDRAILS_SAMPLE" "$GUARDRAILS"
+    info "Created .guardrails from sample — edit it to add your blocked patterns"
+  fi
+}
+
+link_claude_skills() {
+  info "Linking Claude Code skills from dotfiles"
+
+  SKILLS_LINK_SCRIPT="${DOTFILES_HOME_DIR}/claude/skills/link-skills.sh"
+
+  if [ -x "$SKILLS_LINK_SCRIPT" ]; then
+    "$SKILLS_LINK_SCRIPT" --clean
+    success "Linked Claude Code skills"
+  else
+    info "No Claude skills link script found, skipping"
+  fi
+}
+
 main() {
   ask_for_sudo "$@"
   clr_screen "$@"
@@ -268,6 +336,7 @@ main() {
   banner "$@"
   info "MacOS Version: ${OSX_VERS}"
   info "MacOS SW Build: ${SW_BUILD}"
+  generate_gitconfig "$@"
   create_symlinks "$@"
   install_xcode_cli_tools "$@"
   install_homebrew "$@"
@@ -276,6 +345,8 @@ main() {
   install_oh_my_zsh "$@"
   configure_asdf "$@"
   configure_postgres "$@"
+  link_claude_skills "$@"
+  install_guardrails_hook "$@"
   success "Completed dotfile installation"
 }
 

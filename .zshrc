@@ -51,7 +51,9 @@ export GPG_TTY=$(tty)
 
 export ERL_AFLAGS="-kernel shell_history enabled"
 
-export KERL_CONFIGURE_OPTIONS="--without-javac --with-ssl=$(brew --prefix openssl)"
+export KERL_CONFIGURE_OPTIONS="--with-ssl=$(brew --prefix openssl) \
+                               --without-javac"
+
 export KERL_BUILD_DOCS="yes"
 export KERL_INSTALL_HTMLDOCS="yes"
 export KERL_INSTALL_MANPAGES="yes"
