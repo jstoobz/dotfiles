@@ -1,0 +1,17 @@
+[user]
+	name = __GIT_USER_NAME__
+	email = __GIT_USER_EMAIL__
+[credential]
+	helper = osxkeychain
+[core]
+	editor = code --wait
+	autocrlf = false
+	excludesfile = __HOME_DIR__/.gitignore_global
+	eol = lf
+[init]
+	defaultBranch = main
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
