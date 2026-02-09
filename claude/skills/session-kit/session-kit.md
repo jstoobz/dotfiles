@@ -57,7 +57,7 @@ Session 3:  /pickup → [wrap up] → /park + /retro
 ### Ticket Work (Jira-driven features and bugs)
 
 ```
-/ticket ENG-XXXXX → [implement] → /park
+/ticket PROJ-XXXXX → [implement] → /park
 Next session: /pickup → [finish] → /handoff + /park
 ```
 
@@ -107,7 +107,7 @@ Artifacts live in the current working directory. The existing `.stoobz/<topic>/`
 
 ```
 .stoobz/
-├── ENG-22456/
+├── PROJ-XXXXX/
 │   └── uat-investigation/
 │       ├── TLDR.md
 │       ├── CONTEXT_FOR_NEXT_SESSION.md
@@ -118,7 +118,7 @@ Artifacts live in the current working directory. The existing `.stoobz/<topic>/`
 │   ├── TLDR.md
 │   ├── HANDOFF.md
 │   └── ... investigation files
-└── ENG-BLUNT-ANALYSIS/
+└── PROJ-ANALYSIS/
     └── TLDR.md
 ```
 

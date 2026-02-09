@@ -33,8 +33,8 @@ Summarize loaded context for user:
 ```markdown
 ## Context Loaded
 
-**Ticket:** ENG-12345 - [Title]
-**Epic:** ENG-12300 - [Epic Title]
+**Ticket:** PROJ-12345 - [Title]
+**Epic:** PROJ-12300 - [Epic Title]
 **Linked Docs:** [list or none]
 
 **Key Points:**

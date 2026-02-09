@@ -19,7 +19,6 @@ from pathlib import Path
 
 CLAUDE_DIR = Path.home() / ".claude" / "projects"
 
-# Colors
 GREEN = "\033[0;32m"
 YELLOW = "\033[0;33m"
 RED = "\033[0;31m"

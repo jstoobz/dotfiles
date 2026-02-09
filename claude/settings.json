@@ -1,0 +1,46 @@
+{
+  "env": {
+    "API_TIMEOUT_MS": "3000000",
+    "CLAUDE_AUTOCOMPACT_PCT": "85"
+  },
+  "model": "opus",
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git branch *)",
+      "Bash(git show *)",
+      "Bash(mix test *)",
+      "Bash(mix format *)",
+      "Bash(mix compile *)",
+      "Bash(mix deps.get)",
+      "Bash(mix ecto.migrate)",
+      "Bash(npm test *)",
+      "Bash(npm run *)",
+      "Bash(gh pr *)",
+      "Bash(gh issue *)",
+      "Bash(* --version)",
+      "Bash(* --help)",
+      "Bash(which *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(wc *)",
+      "Bash(sort *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(python *)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(git push --force *)",
+      "Bash(git reset --hard *)",
+      "Bash(git checkout . *)",
+      "Bash(git clean -f *)"
+    ]
+  },
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  }
+}

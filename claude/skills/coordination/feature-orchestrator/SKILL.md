@@ -1,6 +1,6 @@
 ---
 name: feature-orchestrator
-description: Orchestrate feature implementation through planning, agent delegation, and user checkpoints. Use when starting work on a Jira ticket or implementing a feature with structured review gates. Triggers on "implement feature", "work on ticket", "orchestrate", or ticket IDs like ENG-12345. CRITICAL - This skill coordinates agents, it does NOT implement directly.
+description: Orchestrate feature implementation through planning, agent delegation, and user checkpoints. Use when starting work on a Jira ticket or implementing a feature with structured review gates. Triggers on "implement feature", "work on ticket", "orchestrate", or ticket IDs like PROJ-12345. CRITICAL - This skill coordinates agents, it does NOT implement directly.
 ---
 
 # Feature Orchestrator

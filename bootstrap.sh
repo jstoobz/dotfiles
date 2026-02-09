@@ -4,7 +4,7 @@ set -e
 
 DOTFILES_ROOT=$(pwd -P)
 
-GITHUB_REPOSITORY="ostoobz/dotfiles"
+GITHUB_REPOSITORY="jstoobz/dotfiles"
 DOTFILES_TARBALL_URL="https://github.com/$GITHUB_REPOSITORY/tarball/main"
 DOTFILES_HOME_DIR="${HOME}/.dotfiles"
 
@@ -316,6 +316,29 @@ install_guardrails_hook() {
   fi
 }
 
+link_claude_config() {
+  info "Linking Claude Code config from dotfiles"
+
+  CLAUDE_DIR="${HOME}/.claude"
+  CLAUDE_SRC="${DOTFILES_HOME_DIR}/claude"
+
+  [ ! -d "$CLAUDE_DIR" ] && mkdir -p "$CLAUDE_DIR"
+
+  if [ -f "${CLAUDE_SRC}/settings.json" ]; then
+    ln -sf "${CLAUDE_SRC}/settings.json" "${CLAUDE_DIR}/settings.json"
+    success "Linked Claude Code settings.json"
+  else
+    info "No Claude settings.json found in dotfiles, skipping"
+  fi
+
+  if [ -f "${CLAUDE_SRC}/CLAUDE.md" ]; then
+    ln -sf "${CLAUDE_SRC}/CLAUDE.md" "${CLAUDE_DIR}/CLAUDE.md"
+    success "Linked Claude Code CLAUDE.md"
+  else
+    info "No Claude CLAUDE.md found in dotfiles, skipping"
+  fi
+}
+
 link_claude_skills() {
   info "Linking Claude Code skills from dotfiles"
 
@@ -345,6 +368,7 @@ main() {
   install_oh_my_zsh "$@"
   configure_asdf "$@"
   configure_postgres "$@"
+  link_claude_config "$@"
   link_claude_skills "$@"
   install_guardrails_hook "$@"
   success "Completed dotfile installation"

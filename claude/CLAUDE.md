@@ -1,32 +1,32 @@
-# Dotfiles — Claude Code Configuration
+# Global — Claude Code Preferences
 
-This is a **public repository**. All content must be 100% generic and non-proprietary.
+## Communication
 
-## Rules
+- Be concise — no filler, no pleasantries, no preamble
+- Lead with the answer or action, then explain if needed
+- Use tables for comparisons, code blocks for examples
 
-### No Work-Specific Content
+## Elixir Conventions
 
-- **NEVER** include company names, project names, internal module names, database names, or proprietary references
-- **NEVER** include real credentials, API keys, connection strings, or internal URLs
-- Examples must use generic placeholders: `MyApp`, `my_app_dev`, `SomeServer`, `lib/my_app/`
-- Open-source library names (Commanded, Oban, Phoenix, etc.) are fine — they're public
-- When in doubt, use `MyApp` or `Stoobz` as the example namespace
+- Follow `mix format` — never fight the formatter
+- Prefer `|>` pipelines over intermediate variables
+- Pattern match in function heads over conditional logic in bodies
+- Use `with` for multi-step validations, not nested `case`
+- Prefer Ecto.Multi for transactional operations
 
-### Skill Separation
+## General Code Style
 
-- **Generic skills** live here in `~/.dotfiles/claude/skills/` (grouped by domain)
-- **Work-specific skills** live directly in `~/.claude/skills/` (NOT symlinked from dotfiles)
-- The `link-skills.sh` script only links dotfiles skills — work-specific skills are unaffected
-- If a skill needs real module names, database names, or internal paths → it belongs in `~/.claude/skills/`, not here
+- No unnecessary comments, @doc, or @moduledoc — add only when logic isn't self-evident
+- Small focused functions over long imperative blocks
+- Don't add error handling for scenarios that can't happen
 
-### Before Committing
+## Workflow
 
-The pre-commit hook automatically checks staged files against patterns in `.guardrails`.
-If `.guardrails` doesn't exist, copy the sample and add your blocked patterns:
+- Run tests after changes when a test suite exists
+- Run the project formatter before suggesting commits
+- Check for available skills before starting complex multi-step tasks
 
-```bash
-cp .guardrails.sample .guardrails
-# Edit .guardrails — add one pattern per line (extended regex, case-insensitive)
-```
+## Session Artifacts
 
-The `.guardrails` file is gitignored — your patterns stay private.
+- Session artifacts go in `.stoobz/` directories
+- Use /park to wrap up sessions, /pickup to resume
