@@ -55,8 +55,7 @@ fi
 path_prepend "${HOME}/.local/bin"
 path_prepend "${HOME}/bin"
 
-# PostgreSQL 17
-path_prepend "/opt/homebrew/opt/postgresql@17/bin"
+# PostgreSQL (libpq provides psql, pg_dump, etc.)
 path_prepend "/opt/homebrew/opt/libpq/bin"
 
 # Export path
@@ -121,11 +120,11 @@ zstyle ':completion:*:corrections' format '%B%d (errors: %e)%b'
 zstyle ':completion:*' group-name ''
 
 # ============================================================================
-# ASDF Version Manager
+# Mise Version Manager
 # ============================================================================
 
-if [[ -f "$(brew --prefix asdf)/libexec/asdf.sh" ]]; then
-    source "$(brew --prefix asdf)/libexec/asdf.sh"
+if command -v mise &>/dev/null; then
+    eval "$(mise activate zsh)"
 fi
 
 # ============================================================================

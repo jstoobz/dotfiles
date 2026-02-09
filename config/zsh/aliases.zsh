@@ -164,10 +164,10 @@ alias dprune='docker system prune -af'
 # ============================================================================
 
 alias pg='psql -U postgres'
-alias pgstart='brew services start postgresql@17'
-alias pgstop='brew services stop postgresql@17'
-alias pgrestart='brew services restart postgresql@17'
-alias pgstatus='brew services info postgresql@17'
+alias pgstart='brew services start postgresql'
+alias pgstop='brew services stop postgresql'
+alias pgrestart='brew services restart postgresql'
+alias pgstatus='brew services info postgresql'
 
 # ============================================================================
 # Homebrew

@@ -2,8 +2,15 @@
 
 ## Setup
 
-Install dotfiles by running the following in a terminal:
+```shell
+curl -sL https://raw.githubusercontent.com/jstoobz/dotfiles/main/bootstrap.sh | bash
+```
+
+### Options
 
 ```shell
-/bin/bash -c "$(curl -LsS https://raw.githubusercontent.com/jstoobz/dotfiles/main/bootstrap.sh)"
+./install --list             # List available steps
+./install --from-step 3      # Resume from step N
+./install --only dotfiles    # Run a single step by name
+./install --dry-run          # Show what would happen
 ```

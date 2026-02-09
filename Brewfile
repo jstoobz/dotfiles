@@ -86,7 +86,7 @@ brew "rename"       # bulk rename
 brew "watch"        # repeat commands
 brew "vim"
 brew "tmux"
-brew "asdf"         # version manager
+brew "mise"         # version manager (no shims)
 brew "mas"          # Mac App Store CLI
 
 # ============================================================================

@@ -1,0 +1,164 @@
+#!/bin/bash
+# ============================================================================
+# Dotfiles Bootstrap
+#
+# Usage:
+#   ./install                    Run all steps
+#   ./install --from-step 3      Resume from step N
+#   ./install --only dotfiles    Run a single step by name
+#   ./install --dry-run          Show what would happen
+#   ./install --list             List available steps
+# ============================================================================
+
+set -e
+
+DOTFILES_ROOT="$(cd "$(dirname "$0")" && pwd)"
+
+. "${DOTFILES_ROOT}/lib/utils.sh"
+. "${DOTFILES_ROOT}/lib/sudo-keepalive.sh"
+
+# ── Step registry ───────────────────────────────────────────────────────────
+
+STEPS="
+01:xcode:Xcode Command Line Tools
+02:homebrew:Homebrew + Brewfile
+03:dotfiles:Symlink config files
+04:git:Generate .gitconfig
+05:shell:Zsh setup
+06:mise:Language runtimes (mise)
+07:postgres:PostgreSQL setup
+08:guardrails:Pre-commit guardrails hook
+09:claude-skills:Claude Code config + skills
+"
+
+step_number() { echo "$1" | cut -d: -f1; }
+step_name()   { echo "$1" | cut -d: -f2; }
+step_desc()   { echo "$1" | cut -d: -f3-; }
+
+list_steps() {
+  echo ""
+  echo "Available steps:"
+  echo "$STEPS" | while IFS= read -r line; do
+    [ -z "$line" ] && continue
+    num=$(step_number "$line")
+    name=$(step_name "$line")
+    desc=$(step_desc "$line")
+    printf "  %s  %-16s %s\n" "$num" "$name" "$desc"
+  done
+  echo ""
+}
+
+run_step() {
+  local step="$1"
+  local num
+  num=$(step_number "$step")
+  local name
+  name=$(step_name "$step")
+  local desc
+  desc=$(step_desc "$step")
+  local script="${DOTFILES_ROOT}/scripts/${num}-${name}.sh"
+
+  if [ ! -f "$script" ]; then
+    fail "Script not found: $script"
+    return 1
+  fi
+
+  padding
+  info "Step ${num}: ${desc}"
+
+  if [ "$DRY_RUN" = "1" ]; then
+    info "[dry-run] Would run: $script"
+    return
+  fi
+
+  bash -e "$script"
+  success "Completed step ${num}: ${desc}"
+}
+
+# ── Parse arguments ─────────────────────────────────────────────────────────
+
+FROM_STEP=""
+ONLY_STEP=""
+DRY_RUN=""
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --from-step)
+      FROM_STEP="$2"
+      shift 2
+      ;;
+    --only)
+      ONLY_STEP="$2"
+      shift 2
+      ;;
+    --dry-run)
+      DRY_RUN="1"
+      shift
+      ;;
+    --list)
+      list_steps
+      exit 0
+      ;;
+    --help|-h)
+      echo "Usage: ./install [--from-step N] [--only NAME] [--dry-run] [--list]"
+      exit 0
+      ;;
+    *)
+      fail "Unknown option: $1"
+      exit 1
+      ;;
+  esac
+done
+
+# ── Main ────────────────────────────────────────────────────────────────────
+
+clr_screen
+padding
+banner
+
+OSX_VERS=$(sw_vers -productVersion)
+SW_BUILD=$(sw_vers -buildVersion)
+info "macOS ${OSX_VERS} (${SW_BUILD})"
+
+if [ "$DRY_RUN" = "1" ]; then
+  info "DRY RUN — no changes will be made"
+else
+  ask_for_sudo
+fi
+
+# --only: run a single step by name
+if [ -n "$ONLY_STEP" ]; then
+  MATCHED_LINE=""
+  while IFS= read -r line; do
+    [ -z "$line" ] && continue
+    name=$(step_name "$line")
+    if [ "$name" = "$ONLY_STEP" ]; then
+      MATCHED_LINE="$line"
+      break
+    fi
+  done <<< "$STEPS"
+
+  if [ -n "$MATCHED_LINE" ]; then
+    run_step "$MATCHED_LINE"
+  else
+    fail "Unknown step: $ONLY_STEP"
+    list_steps
+    exit 1
+  fi
+  exit 0
+fi
+
+# Run all steps (optionally from a starting step)
+while IFS= read -r line; do
+  [ -z "$line" ] && continue
+  num=$(step_number "$line")
+
+  if [ -n "$FROM_STEP" ] && [ "$num" -lt "$FROM_STEP" ]; then
+    continue
+  fi
+
+  run_step "$line"
+done <<< "$STEPS"
+
+padding
+success "Dotfiles installation complete"
