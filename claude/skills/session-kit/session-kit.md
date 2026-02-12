@@ -6,13 +6,14 @@ A composable set of Claude Code skills for managing session lifecycle — from s
 
 ### Core Artifacts
 
-| Command       | Output                        | Purpose                                                                                                                                                                        |
-| ------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `/tldr`       | `TLDR.md`                     | Concise session summary for sharing with engineers. Key findings, decisions, changes, open items. 2-minute read max.                                                           |
-| `/relay`      | `CONTEXT_FOR_NEXT_SESSION.md` | Everything Claude needs to resume in a new session. Optimized for machine consumption — paths, branch state, decisions, next steps, skills to load.                            |
-| `/prompt-lab` | `PROMPT_LAB.md`               | Captures your original prompt verbatim, analyzes its effectiveness, generates an optimized version, and provides coaching tips. Builds prompt engineering intuition over time. |
-| `/retro`      | `RETRO.md`                    | Session retrospective — what went well, what took longer than expected, what to do differently. Tracks recurring patterns across sessions.                                     |
-| `/handoff`    | `HANDOFF.md`                  | Teammate-facing write-up with full business context, evidence, recommendations, and links. No Claude artifacts — pure human-to-human communication.                            |
+| Command       | Output                                                              | Purpose                                                                                                                                                                        |
+| ------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `/tldr`       | `TLDR.md`                                                           | Concise session summary for sharing with engineers. Key findings, decisions, changes, open items. 2-minute read max.                                                           |
+| `/relay`      | `CONTEXT_FOR_NEXT_SESSION.md`                                       | Everything Claude needs to resume in a new session. Optimized for machine consumption — paths, branch state, decisions, next steps, skills to load.                            |
+| `/prompt-lab` | `PROMPT_LAB.md`                                                     | Captures your original prompt verbatim, analyzes its effectiveness, generates an optimized version, and provides coaching tips. Builds prompt engineering intuition over time. |
+| `/retro`      | `RETRO.md`                                                          | Session retrospective — what went well, what took longer than expected, what to do differently. Tracks recurring patterns across sessions.                                     |
+| `/handoff`    | `HANDOFF.md`                                                        | Teammate-facing write-up with full business context, evidence, recommendations, and links. No Claude artifacts — pure human-to-human communication.                            |
+| `/rca`        | `INVESTIGATION_SUMMARY.md`, `INVESTIGATION_CONTEXT.md`, `evidence/` | Root cause analysis package — quick-scan summary + Claude-droppable deep context + raw evidence. Designed for engineer + Claude consumption without any skill setup.           |
 
 ### Lifecycle Commands
 
@@ -66,6 +67,15 @@ Next session: /pickup → [finish] → /handoff + /park
 ```
 [complete investigation] → /tldr      (quick share in Slack)
                          → /handoff   (full context for PR review or pairing)
+                         → /rca       (investigation package — teammate + their Claude pick it up)
+```
+
+### Production Investigation (debug → package → hand off)
+
+```
+Session 1:  [investigate] → /rca       (package findings + evidence for teammate)
+                          → /park      (save your own session context too)
+Teammate:   [drop INVESTIGATION_CONTEXT.md path into Claude] → review → verify → fix
 ```
 
 ### Prompt Improvement Loop
@@ -113,6 +123,12 @@ Artifacts live in the current working directory. The existing `.stoobz/<topic>/`
 │       ├── CONTEXT_FOR_NEXT_SESSION.md
 │       ├── PROMPT_LAB.md
 │       ├── RETRO.md
+│       ├── INVESTIGATION_SUMMARY.md
+│       ├── INVESTIGATION_CONTEXT.md
+│       ├── evidence/
+│       │   ├── 01-initial-symptoms/
+│       │   ├── 02-hypothesis-testing/
+│       │   └── 03-root-cause/
 │       └── ... other work files
 ├── memory-leaks/
 │   ├── TLDR.md
@@ -126,13 +142,14 @@ No special directory structure required. Artifacts coexist with other session fi
 
 ## Quick Reference
 
-| I want to...                         | Use           |
-| ------------------------------------ | ------------- |
-| Save everything before stepping away | `/park`       |
-| Resume where I left off              | `/pickup`     |
-| Share a quick summary                | `/tldr`       |
-| Write up findings for the team       | `/handoff`    |
-| Save context for my next session     | `/relay`      |
-| Improve my prompting                 | `/prompt-lab` |
-| Reflect on my process                | `/retro`      |
-| Find a past session                  | `/index`      |
+| I want to...                            | Use           |
+| --------------------------------------- | ------------- |
+| Save everything before stepping away    | `/park`       |
+| Resume where I left off                 | `/pickup`     |
+| Share a quick summary                   | `/tldr`       |
+| Write up findings for the team          | `/handoff`    |
+| Save context for my next session        | `/relay`      |
+| Improve my prompting                    | `/prompt-lab` |
+| Reflect on my process                   | `/retro`      |
+| Package an investigation for a teammate | `/rca`        |
+| Find a past session                     | `/index`      |
