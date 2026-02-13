@@ -17,11 +17,15 @@ A composable set of Claude Code skills for managing session lifecycle — from s
 
 ### Lifecycle Commands
 
-| Command   | Output                                                            | Purpose                                                                                               |
-| --------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `/park`   | All of: `TLDR.md`, `CONTEXT_FOR_NEXT_SESSION.md`, `PROMPT_LAB.md` | "I'm stepping away." Generates all core artifacts in one shot.                                        |
-| `/pickup` | _(reads existing artifacts)_                                      | "I'm back." Loads prior session context and presents a briefing. The complement to `/park`.           |
-| `/index`  | _(displayed, not written)_                                        | "Where was that?" Scans `.stoobz/` directories for session artifacts and builds a searchable catalog. |
+| Command                | Output                                                            | Purpose                                                                                                                        |
+| ---------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `/park`                | All of: `TLDR.md`, `CONTEXT_FOR_NEXT_SESSION.md`, `PROMPT_LAB.md` | "I'm stepping away." Generates all core artifacts, archives them to `~/.stoobz/<project>/<date-label>/`, updates manifest.     |
+| `/park <label>`        | _(same as /park)_                                                 | Park with an explicit label for the archive directory (e.g., `/park ENG-23100`).                                               |
+| `/park --archive-system` | _(scans and archives)_                                          | Retroactive cleanup — finds scattered artifacts across repos and archives them to `~/.stoobz/`.                                |
+| `/pickup`              | _(reads existing artifacts)_                                      | "I'm back." Loads prior session context and presents a briefing. The complement to `/park`.                                    |
+| `/index`               | _(displayed, not written)_                                        | "Where was that?" Reads `~/.stoobz/manifest.json` for fast lookup. Supports filtering by topic, tag, or project.              |
+| `/index <filter>`      | _(displayed, not written)_                                        | Filter sessions — searches tags, summary, label, project, and branch (case-insensitive).                                      |
+| `/index --deep <term>` | _(displayed, not written)_                                        | Deep search — greps inside archived artifact content when manifest metadata isn't enough.                                      |
 
 ## Session Lifecycle
 
@@ -34,15 +38,19 @@ Start                         During                        End
   Load skills                 for sharing                   TLDR.md
   Present briefing                                          CONTEXT_FOR_NEXT_SESSION.md
                            /handoff (anytime)                PROMPT_LAB.md
-                              Full write-up
-                              for teammates              /retro (optional)
-                                                            Process reflection
+                              Full write-up               Archives to:
+                              for teammates                 ~/.stoobz/<project>/<date>/
+                                                          Updates manifest.json
+
+                                                        /retro (optional)
+                                                          Process reflection
+
 Later
   |
   v
 /index
-  Find past sessions
-  across .stoobz/ dirs
+  Fast manifest lookup
+  Filter by tag/project
 ```
 
 ## Composability Flows
@@ -89,7 +97,7 @@ Session 2:  [paste optimized prompt from PROMPT_LAB.md] → [work] → /prompt-l
 ### End of Day Dump
 
 ```
-/park                    (saves context + summary + prompt analysis)
+/park                    (saves context + summary + prompt analysis → archives)
 /retro                   (reflect on what worked)
 /handoff                 (if teammates need to pick up tomorrow)
 ```
@@ -97,9 +105,20 @@ Session 2:  [paste optimized prompt from PROMPT_LAB.md] → [work] → /prompt-l
 ### Finding Past Work
 
 ```
-/index                          → see all sessions with artifacts
-/index memory leak              → filter to matching sessions
-cd into a result dir → /pickup  → resume that work
+/index                          → see all sessions from manifest
+/index elixir                   → filter by tag
+/index memory leak              → filter by summary/label
+/index insurance                → filter by project
+cd into source_dir → /pickup    → resume that work
+```
+
+### Retroactive Cleanup
+
+```
+/park --archive-system          → scan for scattered artifacts
+                                  review findings table
+                                  archive to ~/.stoobz/
+                                  optionally clean up originals
 ```
 
 ## File Existence Behavior
@@ -111,45 +130,52 @@ All artifact-generating skills check for existing files before writing:
 - This creates a rolling history — latest first, older entries below
 - Open items from previous sessions are carried forward (completed items checked off)
 
-## Artifact Directory Convention
+## Archive Convention
 
-Artifacts live in the current working directory. The existing `.stoobz/<topic>/` convention is the natural home:
+Session artifacts are archived to a central location for fast indexing and cross-project discovery:
 
 ```
-.stoobz/
-├── PROJ-XXXXX/
-│   └── uat-investigation/
+~/.stoobz/
+├── manifest.json                           ← fast index for /index
+├── insurance/
+│   ├── 2026-02-13-ENG-23100/
+│   │   ├── TLDR.md
+│   │   ├── PROMPT_LAB.md
+│   │   └── RETRO.md
+│   └── 2026-02-10-auth-token-refresh/
 │       ├── TLDR.md
-│       ├── CONTEXT_FOR_NEXT_SESSION.md
-│       ├── PROMPT_LAB.md
-│       ├── RETRO.md
-│       ├── INVESTIGATION_SUMMARY.md
-│       ├── INVESTIGATION_CONTEXT.md
-│       ├── evidence/
-│       │   ├── 01-initial-symptoms/
-│       │   ├── 02-hypothesis-testing/
-│       │   └── 03-root-cause/
-│       └── ... other work files
-├── memory-leaks/
-│   ├── TLDR.md
-│   ├── HANDOFF.md
-│   └── ... investigation files
-└── PROJ-ANALYSIS/
-    └── TLDR.md
+│       ├── HANDOFF.md
+│       └── PROMPT_LAB.md
+├── session-kit-lab/
+│   └── 2026-02-13-archive-feature/
+│       ├── TLDR.md
+│       └── PROMPT_LAB.md
+└── api-gateway/
+    └── 2026-01-28-rate-limiting/
+        ├── TLDR.md
+        ├── INVESTIGATION_SUMMARY.md
+        ├── INVESTIGATION_CONTEXT.md
+        └── evidence/
 ```
 
-No special directory structure required. Artifacts coexist with other session files.
+- `CONTEXT_FOR_NEXT_SESSION.md` always stays in the source cwd (relay baton for `/pickup`)
+- `manifest.json` is the single source of truth for `/index`
+- Archives are organized by project, then by date-label
 
 ## Quick Reference
 
-| I want to...                            | Use           |
-| --------------------------------------- | ------------- |
-| Save everything before stepping away    | `/park`       |
-| Resume where I left off                 | `/pickup`     |
-| Share a quick summary                   | `/tldr`       |
-| Write up findings for the team          | `/handoff`    |
-| Save context for my next session        | `/relay`      |
-| Improve my prompting                    | `/prompt-lab` |
-| Reflect on my process                   | `/retro`      |
-| Package an investigation for a teammate | `/rca`        |
-| Find a past session                     | `/index`      |
+| I want to...                            | Use                    |
+| --------------------------------------- | ---------------------- |
+| Save everything before stepping away    | `/park`                |
+| Park with a specific label              | `/park <label>`        |
+| Resume where I left off                 | `/pickup`              |
+| Share a quick summary                   | `/tldr`                |
+| Write up findings for the team          | `/handoff`             |
+| Save context for my next session        | `/relay`               |
+| Improve my prompting                    | `/prompt-lab`          |
+| Reflect on my process                   | `/retro`               |
+| Package an investigation for a teammate | `/rca`                 |
+| Find a past session                     | `/index`               |
+| Find sessions by topic                  | `/index <filter>`      |
+| Search inside archived artifacts        | `/index --deep <term>` |
+| Archive scattered artifacts             | `/park --archive-system` |
