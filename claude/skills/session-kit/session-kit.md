@@ -22,6 +22,8 @@ A composable set of Claude Code skills for managing session lifecycle — from s
 | `/park`                | All of: `TLDR.md`, `CONTEXT_FOR_NEXT_SESSION.md`, `PROMPT_LAB.md` | "I'm stepping away." Generates all core artifacts, archives them to `~/.stoobz/<project>/<date-label>/`, updates manifest.     |
 | `/park <label>`        | _(same as /park)_                                                 | Park with an explicit label for the archive directory (e.g., `/park ENG-23100`).                                               |
 | `/park --archive-system` | _(scans and archives)_                                          | Retroactive cleanup — finds scattered artifacts across repos and archives them to `~/.stoobz/`.                                |
+| `/persist`             | `<name>.md` in `~/.stoobz/<project>/`                             | "Save this thing." Persists a reference artifact mid-session with tags for `/index` discovery.                                 |
+| `/persist <name>`      | `<name>.md` in `~/.stoobz/<project>/`                             | Persist with explicit name. Add tags after: `/persist runbook playbook tailscale`.                                              |
 | `/pickup`              | _(reads existing artifacts)_                                      | "I'm back." Loads prior session context and presents a briefing. The complement to `/park`.                                    |
 | `/index`               | _(displayed, not written)_                                        | "Where was that?" Reads `~/.stoobz/manifest.json` for fast lookup. Supports filtering by topic, tag, or project.              |
 | `/index <filter>`      | _(displayed, not written)_                                        | Filter sessions — searches tags, summary, label, project, and branch (case-insensitive).                                      |
@@ -41,9 +43,10 @@ Start                         During                        End
                               Full write-up               Archives to:
                               for teammates                 ~/.stoobz/<project>/<date>/
                                                           Updates manifest.json
-
-                                                        /retro (optional)
-                                                          Process reflection
+                           /persist (anytime)
+                              Save a reference            /retro (optional)
+                              artifact mid-session          Process reflection
+                              → ~/.stoobz/<project>/
 
 Later
   |
@@ -176,6 +179,8 @@ Session artifacts are archived to a central location for fast indexing and cross
 | Reflect on my process                   | `/retro`               |
 | Package an investigation for a teammate | `/rca`                 |
 | Find a past session                     | `/index`               |
+| Save a reference artifact mid-session   | `/persist`             |
+| Persist with name and tags              | `/persist <name> <tags>` |
 | Find sessions by topic                  | `/index <filter>`      |
 | Search inside archived artifacts        | `/index --deep <term>` |
 | Archive scattered artifacts             | `/park --archive-system` |
