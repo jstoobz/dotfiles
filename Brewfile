@@ -3,6 +3,8 @@
 # Usage: brew bundle --file=Brewfile
 # ============================================================================
 
+tap "nikitabobko/tap"
+
 
 # ============================================================================
 # Core CLI
@@ -115,19 +117,19 @@ brew "redis"
 
 brew "httpie"       # HTTP client
 brew "nmap"         # network scanner
-brew "mitmproxy"    # HTTP proxy/inspector
+cask "mitmproxy"    # HTTP proxy/inspector
 brew "mtr"          # traceroute + ping
 brew "doggo"        # DNS client
 brew "telnet"
 
 # ============================================================================
-# Build Dependencies (asdf Erlang/Elixir)
+# Build Dependencies (mise Erlang/Elixir)
 # ============================================================================
 
 brew "autoconf"
 brew "automake"
 brew "wxwidgets"
-brew "openssl"
+brew "openssl@3"
 brew "libyaml"
 brew "readline"
 brew "libxslt"
@@ -193,9 +195,7 @@ cask "vscodium"
 cask "brave-browser"
 cask "firefox"
 
-# === Optional: Google Chrome ===
-# Telemetry-heavy — Brave + Firefox cover most browsing needs.
-# cask "google-chrome"
+cask "google-chrome"
 
 # ============================================================================
 # Casks: Dev Tools
@@ -212,7 +212,7 @@ cask "tableplus"
 # ============================================================================
 
 cask "rectangle"    # Window snapping
-cask "aerospace"    # Tiling window manager
+cask "nikitabobko/tap/aerospace"  # Tiling window manager
 cask "karabiner-elements" # Keyboard remapping
 cask "appcleaner"   # Clean uninstalls
 cask "keka"         # Archive utility
@@ -220,7 +220,7 @@ cask "mullvad-vpn"  # VPN
 cask "utm"          # Virtual machines
 cask "qlmarkdown"   # Quick Look markdown preview
 cask "crystalfetch" # macOS installer downloader
-cask "tailscale"    # Mesh VPN
+cask "tailscale-app"  # Mesh VPN
 
 # === Optional: Proprietary Apps ===
 # Uncomment based on personal preference.

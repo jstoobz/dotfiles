@@ -3,7 +3,10 @@
     "API_TIMEOUT_MS": "3000000",
     "CLAUDE_AUTOCOMPACT_PCT": "85"
   },
-  "model": "opus",
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "permissions": {
     "allow": [
       "Bash(git status)",
@@ -39,8 +42,5 @@
       "Bash(git clean -f *)"
     ]
   },
-  "attribution": {
-    "commit": "",
-    "pr": ""
-  }
+  "model": "opus"
 }

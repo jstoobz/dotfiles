@@ -282,15 +282,6 @@ colors() {
   done
 }
 
-# URL encode/decode
-urlencode() {
-  python3 -c "import urllib.parse; print(urllib.parse.quote('$1'))"
-}
-
-urldecode() {
-  python3 -c "import urllib.parse; print(urllib.parse.unquote('$1'))"
-}
-
 # JSON pretty print from clipboard
 jsonclip() {
   pbpaste | jq .
