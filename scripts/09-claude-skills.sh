@@ -41,5 +41,47 @@ link_claude_skills() {
   fi
 }
 
+init_submodules() {
+  info "Initializing Claude skill submodules"
+  git -C "$DOTFILES_ROOT" submodule update --init claude/skills/session-kit claude/vendor/anthropics-skills
+}
+
+link_vendor_skills() {
+  info "Linking vendor skills"
+
+  CLAUDE_SKILLS="${HOME}/.claude/skills"
+  VENDOR_DIR="${DOTFILES_ROOT}/claude/vendor"
+
+  # Anthropic skills — cherry-pick specific skills from the mono-repo
+  ANTHROPIC_SKILLS="${VENDOR_DIR}/anthropics-skills/skills"
+  VENDOR_SKILLS="skill-creator"
+
+  for skill in $VENDOR_SKILLS; do
+    src="${ANTHROPIC_SKILLS}/${skill}"
+    dest="${CLAUDE_SKILLS}/${skill}"
+
+    if [ ! -d "$src" ]; then
+      info "Vendor skill not found: $skill (run git submodule update)"
+      continue
+    fi
+
+    if [ -L "$dest" ]; then
+      existing="$(readlink "$dest")"
+      if [ "$existing" = "$src" ]; then
+        continue
+      fi
+      rm "$dest"
+    elif [ -e "$dest" ]; then
+      info "Skipping vendor skill $skill — $dest exists and is not a symlink"
+      continue
+    fi
+
+    ln -sf "$src" "$dest"
+    info "Linked vendor skill: $skill"
+  done
+}
+
+init_submodules
 link_claude_config
 link_claude_skills
+link_vendor_skills

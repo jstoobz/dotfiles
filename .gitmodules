@@ -1,0 +1,6 @@
+[submodule "claude/skills/session-kit"]
+	path = claude/skills/session-kit
+	url = git@github.com:jstoobz/session-kit.git
+[submodule "claude/vendor/anthropics-skills"]
+	path = claude/vendor/anthropics-skills
+	url = https://github.com/anthropics/skills.git
