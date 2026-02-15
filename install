@@ -29,6 +29,7 @@ STEPS="
 07:postgres:PostgreSQL setup
 08:guardrails:Pre-commit guardrails hook
 09:claude-skills:Claude Code config + skills
+10:editor:VSCodium editor setup
 "
 
 step_number() { echo "$1" | cut -d: -f1; }
