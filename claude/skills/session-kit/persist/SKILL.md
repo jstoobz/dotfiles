@@ -1,11 +1,11 @@
 ---
 name: persist
-description: Save a specific artifact from the current conversation to ~/.stoobz/ for future discovery via /index. Use when the user says "/persist", "save this", "keep this", "persist this", "stash this for later", or wants to capture a reference artifact (table, runbook, research doc, architecture notes, comparison, plan) without ending the session. The in-flight companion to /park.
+description: Save a specific artifact from the current conversation to ~/.stoobz/sessions/ for future discovery via /index. Use when the user says "/persist", "save this", "keep this", "persist this", "stash this for later", or wants to capture a reference artifact (table, runbook, research doc, architecture notes, comparison, plan) without ending the session. The in-flight companion to /park.
 ---
 
 # Persist
 
-Save a reference artifact from the current conversation to `~/.stoobz/` with manifest indexing. The in-flight companion to `/park`.
+Save a reference artifact from the current conversation to `~/.stoobz/sessions/` with manifest indexing. The in-flight companion to `/park`.
 
 ```
 /park     → "save everything, I'm leaving"
@@ -43,7 +43,7 @@ Save a reference artifact from the current conversation to `~/.stoobz/` with man
    - Topics: debugging, performance, migration, refactor, investigation, auth, deployment, testing, infrastructure, playbook, runbook, architecture, comparison
 
 5. **Write the artifact:**
-   - Path: `~/.stoobz/<project>/<name>.md`
+   - Path: `~/.stoobz/sessions/<project>/<name>.md`
    - If file already exists, ask: "Overwrite `<name>.md` or save as `<name>-2.md`?"
    - `mkdir -p` the project directory if needed
    - Extract/format the content as clean markdown
@@ -64,7 +64,7 @@ Save a reference artifact from the current conversation to `~/.stoobz/` with man
      "label": "<name>",
      "summary": "<first heading or first line of content>",
      "source_dir": "<absolute path to cwd>",
-     "archive_path": "<project>/<name>.md",
+     "archive_path": "sessions/<project>/<name>.md",
      "branch": "<git branch or null>",
      "artifacts": ["<name>.md"],
      "tags": ["playbook", "tailscale"],
@@ -75,7 +75,7 @@ Save a reference artifact from the current conversation to `~/.stoobz/` with man
 7. **Confirm:**
 
 ```
-Persisted to ~/.stoobz/<project>/<name>.md
+Persisted to ~/.stoobz/sessions/<project>/<name>.md
   Tags:  playbook, tailscale, powershell
   Find:  /index <name>  or  /index --deep <any-term-in-content>
 ```
@@ -86,7 +86,7 @@ Persisted to ~/.stoobz/<project>/<name>.md
 User: [produces a deployment methods comparison table]
 User: /persist
 
-→ Persisted to ~/.stoobz/utm/deployment-methods.md
+→ Persisted to ~/.stoobz/sessions/utm/deployment-methods.md
   Tags:  windows, deployment, comparison
   Find:  /index deployment
 ```
@@ -94,7 +94,7 @@ User: /persist
 ```
 User: /persist auth-flow-notes auth architecture
 
-→ Persisted to ~/.stoobz/insurance/auth-flow-notes.md
+→ Persisted to ~/.stoobz/sessions/insurance/auth-flow-notes.md
   Tags:  auth, architecture
   Find:  /index auth-flow-notes
 ```
@@ -102,7 +102,7 @@ User: /persist auth-flow-notes auth architecture
 ```
 User: /persist quick-assist-runbook playbook tailscale
 
-→ Persisted to ~/.stoobz/utm/quick-assist-runbook.md
+→ Persisted to ~/.stoobz/sessions/utm/quick-assist-runbook.md
   Tags:  playbook, tailscale
   Find:  /index playbook
 ```
@@ -114,6 +114,6 @@ User: /persist quick-assist-runbook playbook tailscale
 - **Don't over-format** — Preserve the artifact's natural structure. Don't wrap a table in unnecessary headings.
 - **Infer from context** — When called without a name, look at what was just discussed/produced and pick the right content and name.
 - **Tags are cheap** — 2-5 tags. Better to over-tag than under-tag. These power `/index` search.
-- **Flat in project dir** — Files go directly in `~/.stoobz/<project>/`, not in subdirectories. The manifest `type: "reference"` distinguishes them from session archives.
+- **Flat in project dir** — Files go directly in `~/.stoobz/sessions/<project>/`, not in subdirectories. The manifest `type: "reference"` distinguishes them from session archives.
 - **Don't duplicate** — If the content already exists in the archive (same project, same name), update in place.
 - **No session ceremony** — This isn't `/park`. No TLDR, no relay doc, no prompt lab. Just save the thing.

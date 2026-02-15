@@ -1,11 +1,11 @@
 ---
 name: park
-description: Park the current session by generating all session artifacts, archiving them to ~/.stoobz/<project>/<date-label>/, and updating the manifest. Use when the user says "/park", "park this session", "wrap up", "I'm done for now", "save everything", or wants to create a complete handoff package before leaving a session. Runs /tldr, /relay, and /prompt-lab in sequence, then archives. Supports --archive-system for retroactive cleanup of scattered .stoobz/ directories (with --select, --all, --dry-run, --clean flags).
+description: Park the current session by generating all session artifacts, archiving them to ~/.stoobz/sessions/<project>/<date-label>/, and updating the manifest. Use when the user says "/park", "park this session", "wrap up", "I'm done for now", "save everything", or wants to create a complete handoff package before leaving a session. Runs /tldr, /relay, and /prompt-lab in sequence, then archives. Supports --archive-system for retroactive cleanup of scattered .stoobz/ directories (with --select, --all, --dry-run, --clean flags).
 ---
 
 # Park Session
 
-Generate all session artifacts, archive them to `~/.stoobz/`, and clean up cwd. The "I'm stepping away, save everything" command.
+Generate all session artifacts, archive them to `~/.stoobz/sessions/`, and clean up cwd. The "I'm stepping away, save everything" command.
 
 ## Process
 
@@ -36,7 +36,7 @@ Generate all session artifacts, archive them to `~/.stoobz/`, and clean up cwd. 
    - Fallback → date only (no label suffix)
 
 6. **Build archive path:**
-   - Pattern: `~/.stoobz/<project>/<YYYY-MM-DD>-<label>/`
+   - Pattern: `~/.stoobz/sessions/<project>/<YYYY-MM-DD>-<label>/`
    - If path already exists, append `-2`, `-3`, etc.
    - `mkdir -p` the path
 
@@ -69,7 +69,7 @@ Generate all session artifacts, archive them to `~/.stoobz/`, and clean up cwd. 
      "label": "<label>",
      "summary": "<first heading text from TLDR.md>",
      "source_dir": "<absolute path to cwd>",
-     "archive_path": "<project>/<YYYY-MM-DD>-<label>",
+     "archive_path": "sessions/<project>/<YYYY-MM-DD>-<label>",
      "branch": "<git branch or null>",
      "artifacts": ["TLDR.md", "PROMPT_LAB.md"],
      "tags": ["elixir", "auth"],
@@ -87,7 +87,7 @@ Generate all session artifacts, archive them to `~/.stoobz/`, and clean up cwd. 
 ```
 Session parked and archived.
 
-  Archive:  ~/.stoobz/<project>/<date-label>/
+  Archive:  ~/.stoobz/sessions/<project>/<date-label>/
   Artifacts archived: TLDR.md, PROMPT_LAB.md
   Relay:    CONTEXT_FOR_NEXT_SESSION.md (stays in cwd)
   Tags:     elixir, phoenix, auth
@@ -162,7 +162,7 @@ Show all discovered units in a table:
 
 For each selected unit:
 
-1. **Build archive path:** `~/.stoobz/<project>/<YYYY-MM-DD>-<label>/`
+1. **Build archive path:** `~/.stoobz/sessions/<project>/<YYYY-MM-DD>-<label>/`
    - If path exists, append `-2`, `-3`, etc.
    - `mkdir -p` the path
 

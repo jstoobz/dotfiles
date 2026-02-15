@@ -5,7 +5,7 @@ description: Scan ~/.stoobz/manifest.json for session artifacts and build a sear
 
 # Index
 
-Find and catalog past sessions from the `~/.stoobz/` archive.
+Find and catalog past sessions from the `~/.stoobz/sessions/` archive.
 
 ## Process
 
@@ -48,7 +48,7 @@ Find and catalog past sessions from the `~/.stoobz/` archive.
 
 When invoked as `/index --deep <term>` (or `/index -d <term>`), search inside the actual archived artifact content:
 
-1. **Grep `~/.stoobz/`** — Search all `.md` files under `~/.stoobz/` for the term (case-insensitive).
+1. **Grep `~/.stoobz/sessions/`** — Search all `.md` files under `~/.stoobz/sessions/` for the term (case-insensitive).
 
 2. **Group by session** — Collect hits by their parent archive directory, not individual files.
 
@@ -67,7 +67,7 @@ Tags: windows, deployment, infrastructure
 
 4. **Also run manifest search** — Show manifest matches first (fast), then deep matches below. This way the user sees both metadata hits and content hits.
 
-5. **If no manifest exists**, deep search still works — it's just grep over `~/.stoobz/`.
+5. **If no manifest exists**, deep search still works — it's just grep over `~/.stoobz/sessions/`.
 
 ### Filesystem Fallback (no manifest)
 
@@ -75,7 +75,7 @@ If `~/.stoobz/manifest.json` doesn't exist:
 
 1. **Notify the user:** "No manifest found. Falling back to filesystem scan..."
 
-2. **Scan `~/.stoobz/`** for directories containing session artifacts (`TLDR.md`, `RETRO.md`, `PROMPT_LAB.md`, `HANDOFF.md`, `INVESTIGATION_SUMMARY.md`, `INVESTIGATION_CONTEXT.md`).
+2. **Scan `~/.stoobz/sessions/`** for directories containing session artifacts (`TLDR.md`, `RETRO.md`, `PROMPT_LAB.md`, `HANDOFF.md`, `INVESTIGATION_SUMMARY.md`, `INVESTIGATION_CONTEXT.md`).
 
 3. **For each directory found:**
    - Read the first 5 lines of `TLDR.md` (if present) for the title and date

@@ -19,12 +19,12 @@ A composable set of Claude Code skills for managing session lifecycle — from s
 
 | Command                | Output                                                            | Purpose                                                                                                                        |
 | ---------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `/park`                  | `TLDR.md`, `CONTEXT_FOR_NEXT_SESSION.md`, `PROMPT_LAB.md`          | "I'm stepping away." Generates all core artifacts, archives to `~/.stoobz/<project>/<date-label>/`. `CONTEXT_FOR_NEXT_SESSION.md` stays in cwd as relay baton. |
+| `/park`                  | `TLDR.md`, `CONTEXT_FOR_NEXT_SESSION.md`, `PROMPT_LAB.md`          | "I'm stepping away." Generates all core artifacts, archives to `~/.stoobz/sessions/<project>/<date-label>/`. `CONTEXT_FOR_NEXT_SESSION.md` stays in cwd as relay baton. |
 | `/park <label>`          | _(same as /park)_                                                  | Park with an explicit label for the archive directory (e.g., `/park ENG-23100`).                                               |
-| `/park --archive-system` | _(scans and archives)_                                             | Retroactive cleanup — finds scattered `.stoobz/` dirs and loose artifacts, archives full subtrees to `~/.stoobz/`. Flags: `--select` (default), `--all`, `--dry-run`, `--clean`. |
+| `/park --archive-system` | _(scans and archives)_                                             | Retroactive cleanup — finds scattered `.stoobz/` dirs and loose artifacts, archives full subtrees to `~/.stoobz/sessions/`. Flags: `--select` (default), `--all`, `--dry-run`, `--clean`. |
 | `/retro`                 | `RETRO.md`                                                         | Session retrospective — what went well, what took longer, what to do differently. Can run anytime; `/park` archives it if present. |
-| `/persist`               | `<name>.md` in `~/.stoobz/<project>/`                              | "Save this thing." Persists a reference artifact mid-session with tags for `/index` discovery.                                 |
-| `/persist <name> <tags>` | `<name>.md` in `~/.stoobz/<project>/`                              | Persist with explicit name and tags: `/persist runbook playbook tailscale`.                                                    |
+| `/persist`               | `<name>.md` in `~/.stoobz/sessions/<project>/`                              | "Save this thing." Persists a reference artifact mid-session with tags for `/index` discovery.                                 |
+| `/persist <name> <tags>` | `<name>.md` in `~/.stoobz/sessions/<project>/`                              | Persist with explicit name and tags: `/persist runbook playbook tailscale`.                                                    |
 | `/pickup`                | _(reads existing artifacts)_                                       | "I'm back." Loads prior session context and presents a briefing. The complement to `/park`.                                    |
 | `/index`                 | _(displayed, not written)_                                         | "Where was that?" Reads `~/.stoobz/manifest.json` for fast lookup. Supports filtering by topic, tag, or project.              |
 | `/index <filter>`        | _(displayed, not written)_                                         | Filter sessions — searches tags, summary, label, project, and branch (case-insensitive).                                      |
@@ -42,12 +42,12 @@ Start                         During                        End
   Present briefing                                          CONTEXT_FOR_NEXT_SESSION.md
                            /handoff (anytime)                PROMPT_LAB.md
                               Full write-up               Archives to:
-                              for teammates                 ~/.stoobz/<project>/<date>/
+                              for teammates                 ~/.stoobz/sessions/<project>/<date>/
                                                           Updates manifest.json
                            /persist (anytime)
                               Save a reference            /retro (optional)
                               artifact mid-session          Process reflection
-                              → ~/.stoobz/<project>/
+                              → ~/.stoobz/sessions/<project>/
 
 Later
   |
@@ -140,26 +140,27 @@ Session artifacts are archived to a central location for fast indexing and cross
 
 ```
 ~/.stoobz/
-├── manifest.json                           ← fast index for /index
-├── insurance/
-│   ├── 2026-02-13-ENG-23100/
-│   │   ├── TLDR.md
-│   │   ├── PROMPT_LAB.md
-│   │   └── RETRO.md
-│   └── 2026-02-10-auth-token-refresh/
-│       ├── TLDR.md
-│       ├── HANDOFF.md
-│       └── PROMPT_LAB.md
-├── session-kit-lab/
-│   └── 2026-02-13-archive-feature/
-│       ├── TLDR.md
-│       └── PROMPT_LAB.md
-└── api-gateway/
-    └── 2026-01-28-rate-limiting/
-        ├── TLDR.md
-        ├── INVESTIGATION_SUMMARY.md
-        ├── INVESTIGATION_CONTEXT.md
-        └── evidence/
+├── manifest.json                                ← fast index for /index
+├── sessions/                                    ← all /park + /persist output
+│   ├── insurance/
+│   │   ├── 2026-02-13-ENG-23100/               ← /park session archive
+│   │   │   ├── TLDR.md
+│   │   │   ├── PROMPT_LAB.md
+│   │   │   └── RETRO.md
+│   │   ├── 2026-02-10-auth-token-refresh/
+│   │   │   └── ...
+│   │   └── auth-flow-notes.md                   ← /persist reference artifact
+│   ├── session-kit-lab/
+│   │   └── 2026-02-13-archive-feature/
+│   │       ├── TLDR.md
+│   │       └── PROMPT_LAB.md
+│   └── api-gateway/
+│       └── 2026-01-28-rate-limiting/
+│           ├── TLDR.md
+│           ├── INVESTIGATION_SUMMARY.md
+│           └── evidence/
+├── prompts/                                     ← organic work (not managed by session-kit)
+└── ...
 ```
 
 - `CONTEXT_FOR_NEXT_SESSION.md` stays in source cwd during normal `/park` (relay baton for `/pickup`). In `--archive-system` mode, it gets archived too (old sessions nobody is picking up).
