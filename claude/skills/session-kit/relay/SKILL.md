@@ -18,6 +18,7 @@ Generate a `CONTEXT_FOR_NEXT_SESSION.md` that enables a new Claude session to re
    - Current git branch, uncommitted changes, recent commits
    - Working directory and key file paths referenced in conversation
    - Environment details (which env was targeted: local, QA, UAT, prod)
+   - Skills invoked during this session (scan conversation for `/skill-name` invocations)
 
 3. **Extract from conversation:**
    - What we were working on and why
@@ -79,10 +80,12 @@ Generate a `CONTEXT_FOR_NEXT_SESSION.md` that enables a new Claude session to re
 
 ## Skills To Load
 
-{List any skills that were useful this session, e.g.:}
+{Auto-populated from skills invoked during this session. List each skill that was
+actively used (not just mentioned). Include a brief note on what it was used for.
+If no skills were invoked beyond session-kit lifecycle commands, omit this section.}
 
-- `/beam-expert` — for OTP debugging
-- `/use-db` — for querying remote databases
+- `/beam-expert` — OTP process debugging
+- `/use-db` — queried UAT eventstore
 
 ---
 
@@ -95,5 +98,6 @@ _Paste this document at the start of your next Claude Code session in this direc
 - **Include the "why" not just the "what"** — next session needs to understand intent, not just facts
 - **Concrete over abstract** — "check `lib/my_app/accounts/projectors/user_projector.ex` line 42" beats "look at the projector"
 - **Skip sections with no content** — don't include empty Gotchas or Decisions sections
+- **Auto-detect skills** — Scan the conversation for skill invocations (commands like `/beam-expert`, `/use-db`, etc.) and list them in Skills To Load. Exclude session-kit lifecycle skills (`/park`, `/relay`, `/tldr`, `/pickup`, `/prompt-lab`, `/retro`, `/handoff`, `/rca`, `/index`, `/persist`) — those are infrastructure, not domain context.
 - **Skills recommendation** — always include which skills were loaded/useful so the next session can load them immediately
 - Write to `./CONTEXT_FOR_NEXT_SESSION.md` unless the user specifies a different path
