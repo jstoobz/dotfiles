@@ -1,6 +1,6 @@
 ---
 name: park
-description: Park the current session by generating all session artifacts, archiving them to ~/.stoobz/<project>/<date-label>/, and updating the manifest. Use when the user says "/park", "park this session", "wrap up", "I'm done for now", "save everything", or wants to create a complete handoff package before leaving a session. Runs /tldr, /relay, and /prompt-lab in sequence, then archives. Supports --archive-system for retroactive cleanup of scattered artifacts.
+description: Park the current session by generating all session artifacts, archiving them to ~/.stoobz/<project>/<date-label>/, and updating the manifest. Use when the user says "/park", "park this session", "wrap up", "I'm done for now", "save everything", or wants to create a complete handoff package before leaving a session. Runs /tldr, /relay, and /prompt-lab in sequence, then archives. Supports --archive-system for retroactive cleanup of scattered .stoobz/ directories (with --select, --all, --dry-run, --clean flags).
 ---
 
 # Park Session
@@ -78,7 +78,7 @@ Generate all session artifacts, archive them to `~/.stoobz/`, and clean up cwd. 
    ```
 
    **Tags** — Auto-detect 2-5 tags from TLDR.md content:
-   - Languages: elixir, python, javascript, typescript, ruby, go, rust, sql
+   - Languages: elixir, python, javascript, typescript, ruby, go, rust, sql, bash, powershell
    - Frameworks: phoenix, ecto, oban, react, next, absinthe, liveview
    - Topics: debugging, performance, migration, refactor, investigation, auth, deployment, testing, infrastructure
 
@@ -98,34 +98,103 @@ Session parked and archived.
 
 ## `--archive-system` — Retroactive Cleanup
 
-When invoked as `/park --archive-system`, skip artifact generation and instead archive existing scattered artifacts:
+When invoked as `/park --archive-system`, skip artifact generation and instead archive existing scattered `.stoobz/` directories as complete units.
 
-1. **Scan for artifacts** — Run `find ~ -maxdepth 4 -type d -name ".stoobz"` and also scan common project roots for loose session artifacts (`TLDR.md`, `RETRO.md`, `HANDOFF.md`, `PROMPT_LAB.md`, `INVESTIGATION_SUMMARY.md`, `INVESTIGATION_CONTEXT.md`) that aren't already under `~/.stoobz/`.
+### Flags
 
-2. **Present findings:**
+| Flag | Behavior |
+|------|----------|
+| `--select` | Interactive picker — present table, user picks which to archive **(DEFAULT)** |
+| `--all` | Archive everything found, no prompting |
+| `--dry-run` | Show what would happen, take no action |
+| `--clean` | Auto-remove originals after verified archive (default: ask per-source) |
+
+Flags combine: `--all --clean` archives and cleans everything. `--dry-run --all` shows full plan.
+
+### Step 1 — Scan
+
+Run `find ~ -maxdepth 4 -type d -name ".stoobz"` to find all `.stoobz/` directories.
+
+**Skip:** any `.stoobz/` that is under `~/.stoobz/` (already archived). Skip empty dirs.
+
+Also scan for **loose artifacts** — `TLDR.md`, `RETRO.md`, `HANDOFF.md`, `PROMPT_LAB.md`, `CONTEXT_FOR_NEXT_SESSION.md`, `INVESTIGATION_SUMMARY.md`, `INVESTIGATION_CONTEXT.md` — sitting in project roots (not inside any `.stoobz/`), not under `~/.stoobz/`.
+
+### Step 2 — Build session units
+
+Classify each discovered `.stoobz/` directory:
+
+| Pattern | Structure | Result |
+|---------|-----------|--------|
+| **A — Flat files** | `.stoobz/` contains only files (no subdirs) | One session unit — `cp -r` everything |
+| **B — Subdirectories** | `.stoobz/` contains only subdirs | Each subdir is a separate session unit |
+| **C — Mixed** | `.stoobz/` has both files and subdirs | Each subdir → separate unit; loose files → one additional unit |
+
+**Loose artifacts** found in project roots are grouped by project into one additional unit per project.
+
+For each session unit, resolve:
+
+- **Project** — nearest git repo basename (via `git -C <path> rev-parse --show-toplevel`), or parent directory basename
+- **Label** — subdir name if from Pattern B/C, else slugified first heading from TLDR.md (max 50 chars, lowercase, hyphens), else parent directory name
+- **Date** — most recent mtime among files in the unit
+- **Summary** — first heading from TLDR.md if present, else first heading from any `.md` file in the unit, else "No summary"
+- **Files** — full list of filenames in the unit
+
+### Step 3 — Present findings
+
+Show all discovered units in a table:
 
 ```markdown
-## Found Session Artifacts
+## Found Session Units
 
-| # | Location | Artifacts | Date | Summary |
-|---|----------|-----------|------|---------|
-| 1 | ~/projects/insurance/.stoobz/ENG-23100/ | T R P | 2026-02-10 | Auth token refresh fix |
-| 2 | ~/work/api/TLDR.md | T | 2026-02-08 | API rate limiting |
-| 3 | ~/projects/insurance/.stoobz/memory-leaks/ | T C H | 2026-01-28 | BEAM memory investigation |
-
-Archive all? [Y/n] or specify numbers to skip.
+| # | Source | Files | Date | Summary |
+|---|--------|-------|------|---------|
+| 1 | ~/utm/.stoobz/ (7 files) | PLAN.md, deployment-methods.md, +5 | 2026-02-12 | USB bundle |
+| 2 | ~/.dotfiles/.stoobz/df-ci/ (3 files) | TLDR.md, PROMPT_LAB.md, +1 | 2026-02-12 | Git cleanup |
+| 3 | ~/.dotfiles/.stoobz/configs-to-version/ (5 files) | direnv, gh, +3 | 2026-02-12 | No summary |
+| 4 | ~/work/api/ (2 loose files) | TLDR.md, RETRO.md | 2026-02-08 | API rate limiting |
 ```
 
-3. **For each selected location:**
-   - Determine project name from the git repo or parent directory
-   - Determine label from directory name, branch, or TLDR heading
-   - Copy (not move) artifacts to `~/.stoobz/<project>/<date-label>/`
-   - Update `~/.stoobz/manifest.json` with each entry
-   - Ask before removing source files: "Remove originals from `<path>`? [y/N]"
+- `--select` (default): Show table, then ask "Enter numbers to archive (e.g. 1,3,4), or `all`:"
+- `--all`: Show table, then proceed without prompting
+- `--dry-run`: Show table with the header "## Dry Run — No changes will be made", then stop
 
-4. **Skip** any artifacts already under `~/.stoobz/` (already archived).
+### Step 4 — Archive each selected unit
 
-5. **Print summary** with count of sessions archived and manifest location.
+For each selected unit:
+
+1. **Build archive path:** `~/.stoobz/<project>/<YYYY-MM-DD>-<label>/`
+   - If path exists, append `-2`, `-3`, etc.
+   - `mkdir -p` the path
+
+2. **Copy entire subtree:** `cp -r <source>/* <archive-path>/`
+   - For Pattern A: copy all files from `.stoobz/`
+   - For Pattern B/C subdirs: copy all files from the subdir
+   - For Pattern C loose files: copy the loose files
+   - For loose artifacts: copy the individual files
+   - `CONTEXT_FOR_NEXT_SESSION.md` is included in the archive (these are old sessions nobody is picking up)
+
+3. **Verify copy:** compare file count in source vs archive. Only proceed to cleanup if counts match.
+
+4. **Update manifest** — same schema as normal `/park` (Step 9 above), with `"type": "session"` and `artifacts` array listing **all files** in the unit.
+
+### Step 5 — Clean up originals
+
+- **Default:** ask per-source: "Remove originals from `<path>`? [y/N]"
+- **`--clean`:** auto-remove without asking
+- **Partially-selected `.stoobz/` dirs (Pattern B/C):** only remove the archived subdirs or files, not the entire `.stoobz/` directory
+- **Never remove** until copy verification passes (Step 4.3)
+
+### Step 6 — Print summary
+
+```
+Archive system complete.
+
+  Archived: 4 session units
+  Manifest: ~/.stoobz/manifest.json (4 entries added)
+  Cleaned:  3 source locations removed
+
+  Run /index to browse all sessions.
+```
 
 ## Rules
 
@@ -134,6 +203,6 @@ Archive all? [Y/n] or specify numbers to skip.
 - **Respect existing files** — Each skill handles its own file existence check.
 - **Don't re-explain** — Just execute. The user wants results, not descriptions.
 - **No questions** — Generate all three without asking. Use best judgment for content.
-- **CONTEXT_FOR_NEXT_SESSION.md never moves** — It stays in cwd as the relay baton for `/pickup`.
+- **CONTEXT_FOR_NEXT_SESSION.md never moves** (normal mode) — It stays in cwd as the relay baton for `/pickup`. In `--archive-system` mode, it gets archived too (old sessions nobody is picking up).
 - **Manifest is append-only** — Never remove entries, only add or update in place.
 - **Idempotent** — Re-parking the same session updates the existing archive entry rather than creating duplicates.

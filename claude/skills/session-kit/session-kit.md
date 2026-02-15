@@ -19,15 +19,16 @@ A composable set of Claude Code skills for managing session lifecycle — from s
 
 | Command                | Output                                                            | Purpose                                                                                                                        |
 | ---------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `/park`                | All of: `TLDR.md`, `CONTEXT_FOR_NEXT_SESSION.md`, `PROMPT_LAB.md` | "I'm stepping away." Generates all core artifacts, archives them to `~/.stoobz/<project>/<date-label>/`, updates manifest.     |
-| `/park <label>`        | _(same as /park)_                                                 | Park with an explicit label for the archive directory (e.g., `/park ENG-23100`).                                               |
-| `/park --archive-system` | _(scans and archives)_                                          | Retroactive cleanup — finds scattered artifacts across repos and archives them to `~/.stoobz/`.                                |
-| `/persist`             | `<name>.md` in `~/.stoobz/<project>/`                             | "Save this thing." Persists a reference artifact mid-session with tags for `/index` discovery.                                 |
-| `/persist <name>`      | `<name>.md` in `~/.stoobz/<project>/`                             | Persist with explicit name. Add tags after: `/persist runbook playbook tailscale`.                                              |
-| `/pickup`              | _(reads existing artifacts)_                                      | "I'm back." Loads prior session context and presents a briefing. The complement to `/park`.                                    |
-| `/index`               | _(displayed, not written)_                                        | "Where was that?" Reads `~/.stoobz/manifest.json` for fast lookup. Supports filtering by topic, tag, or project.              |
-| `/index <filter>`      | _(displayed, not written)_                                        | Filter sessions — searches tags, summary, label, project, and branch (case-insensitive).                                      |
-| `/index --deep <term>` | _(displayed, not written)_                                        | Deep search — greps inside archived artifact content when manifest metadata isn't enough.                                      |
+| `/park`                  | `TLDR.md`, `CONTEXT_FOR_NEXT_SESSION.md`, `PROMPT_LAB.md`          | "I'm stepping away." Generates all core artifacts, archives to `~/.stoobz/<project>/<date-label>/`. `CONTEXT_FOR_NEXT_SESSION.md` stays in cwd as relay baton. |
+| `/park <label>`          | _(same as /park)_                                                  | Park with an explicit label for the archive directory (e.g., `/park ENG-23100`).                                               |
+| `/park --archive-system` | _(scans and archives)_                                             | Retroactive cleanup — finds scattered `.stoobz/` dirs and loose artifacts, archives full subtrees to `~/.stoobz/`. Flags: `--select` (default), `--all`, `--dry-run`, `--clean`. |
+| `/retro`                 | `RETRO.md`                                                         | Session retrospective — what went well, what took longer, what to do differently. Can run anytime; `/park` archives it if present. |
+| `/persist`               | `<name>.md` in `~/.stoobz/<project>/`                              | "Save this thing." Persists a reference artifact mid-session with tags for `/index` discovery.                                 |
+| `/persist <name> <tags>` | `<name>.md` in `~/.stoobz/<project>/`                              | Persist with explicit name and tags: `/persist runbook playbook tailscale`.                                                    |
+| `/pickup`                | _(reads existing artifacts)_                                       | "I'm back." Loads prior session context and presents a briefing. The complement to `/park`.                                    |
+| `/index`                 | _(displayed, not written)_                                         | "Where was that?" Reads `~/.stoobz/manifest.json` for fast lookup. Supports filtering by topic, tag, or project.              |
+| `/index <filter>`        | _(displayed, not written)_                                         | Filter sessions — searches tags, summary, label, project, and branch (case-insensitive).                                      |
+| `/index --deep <term>`   | _(displayed, not written)_                                         | Deep search — greps inside archived artifact content when manifest metadata isn't enough.                                      |
 
 ## Session Lifecycle
 
@@ -118,10 +119,10 @@ cd into source_dir → /pickup    → resume that work
 ### Retroactive Cleanup
 
 ```
-/park --archive-system          → scan for scattered artifacts
-                                  review findings table
-                                  archive to ~/.stoobz/
-                                  optionally clean up originals
+/park --archive-system              → interactive picker (default --select)
+/park --archive-system --dry-run    → show what would happen, no changes
+/park --archive-system --all        → archive everything, no prompting
+/park --archive-system --all --clean → archive + auto-remove originals
 ```
 
 ## File Existence Behavior
@@ -161,7 +162,7 @@ Session artifacts are archived to a central location for fast indexing and cross
         └── evidence/
 ```
 
-- `CONTEXT_FOR_NEXT_SESSION.md` always stays in the source cwd (relay baton for `/pickup`)
+- `CONTEXT_FOR_NEXT_SESSION.md` stays in source cwd during normal `/park` (relay baton for `/pickup`). In `--archive-system` mode, it gets archived too (old sessions nobody is picking up).
 - `manifest.json` is the single source of truth for `/index`
 - Archives are organized by project, then by date-label
 
@@ -180,7 +181,9 @@ Session artifacts are archived to a central location for fast indexing and cross
 | Package an investigation for a teammate | `/rca`                 |
 | Find a past session                     | `/index`               |
 | Save a reference artifact mid-session   | `/persist`             |
-| Persist with name and tags              | `/persist <name> <tags>` |
+| Persist with name and tags              | `/persist <name> <tag1> <tag2>...` |
 | Find sessions by topic                  | `/index <filter>`      |
 | Search inside archived artifacts        | `/index --deep <term>` |
-| Archive scattered artifacts             | `/park --archive-system` |
+| Archive scattered artifacts             | `/park --archive-system`           |
+| Preview archive cleanup                | `/park --archive-system --dry-run` |
+| Archive everything non-interactively   | `/park --archive-system --all`     |

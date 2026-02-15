@@ -84,7 +84,7 @@ If `~/.stoobz/manifest.json` doesn't exist:
 
 4. **Present the index** in the same table format as above (without tags, since those come from the manifest).
 
-5. **Suggest:** "Run `/park --archive-system` to build a manifest from these artifacts for faster future lookups."
+5. **Suggest:** "Run `/park --archive-system` to build a manifest from these artifacts for faster future lookups. Add `--all` to skip prompting, or `--dry-run` to preview first."
 
 ## Rules
 
