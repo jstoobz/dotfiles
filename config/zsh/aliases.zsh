@@ -72,6 +72,7 @@ alias duf='du -sh *'
 
 alias e='${EDITOR}'
 alias edit='${EDITOR}'
+alias code='codium'
 alias zshrc='${EDITOR} ~/.zshrc'
 alias aliases='${EDITOR} ${XDG_CONFIG_HOME}/zsh/aliases.zsh'
 
