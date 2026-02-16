@@ -19,9 +19,12 @@ link_dotfiles() {
   backup_if_exists "${HOME}/.editorconfig" "$BACKUP_DIR"
   backup_if_exists "${HOME}/.hushlogin" "$BACKUP_DIR"
   backup_if_exists "${HOME}/.iex.exs" "$BACKUP_DIR"
+  backup_if_exists "${HOME}/.config/nvim/init.lua" "$BACKUP_DIR"
+  backup_if_exists "${HOME}/.tmux.conf" "$BACKUP_DIR"
 
   # Ensure XDG directories exist
   mkdir -p "${HOME}/.config/zsh"
+  mkdir -p "${HOME}/.config/nvim"
 
   # Symlink configs
   symlink "${DOTFILES_ROOT}/config/zsh/.zshrc" "${HOME}/.zshrc"
@@ -32,6 +35,8 @@ link_dotfiles() {
   symlink "${DOTFILES_ROOT}/config/misc/.hushlogin" "${HOME}/.hushlogin"
   symlink "${DOTFILES_ROOT}/config/iex/.iex.exs" "${HOME}/.iex.exs"
   symlink "${DOTFILES_ROOT}/config/mise/.tool-versions" "${HOME}/.tool-versions"
+  symlink "${DOTFILES_ROOT}/config/nvim/init.lua" "${HOME}/.config/nvim/init.lua"
+  symlink "${DOTFILES_ROOT}/config/tmux/.tmux.conf" "${HOME}/.tmux.conf"
 
   success "Symlinked all config files"
 }

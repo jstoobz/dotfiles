@@ -87,6 +87,7 @@ brew "dos2unix"     # line ending conversion
 brew "rename"       # bulk rename
 brew "watch"        # repeat commands
 brew "vim"
+brew "neovim"
 brew "tmux"
 brew "mise"         # version manager (no shims)
 brew "mas"          # Mac App Store CLI
@@ -220,6 +221,7 @@ cask "mullvad-vpn"  # VPN
 cask "utm"          # Virtual machines
 cask "qlmarkdown"   # Quick Look markdown preview
 cask "crystalfetch" # macOS installer downloader
+brew "tailscale"        # Tailscale CLI
 cask "tailscale-app"  # Mesh VPN
 
 # === Optional: Proprietary Apps ===
