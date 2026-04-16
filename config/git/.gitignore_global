@@ -3,7 +3,6 @@
 ################################################################################
 
 # General
-.DS_Store
 .AppleDouble
 .LSOverride
 
@@ -186,3 +185,4 @@ sitemap.xml
 
 # Generated from template — machine-specific
 .gitconfig
+.claude
