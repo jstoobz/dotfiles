@@ -1,11 +1,21 @@
 {
   "env": {
     "API_TIMEOUT_MS": "3000000",
-    "CLAUDE_AUTOCOMPACT_PCT": "85"
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "70"
   },
+  "cleanupPeriodDays": 90,
+  "showThinkingSummaries": true,
   "attribution": {
     "commit": "",
     "pr": ""
+  },
+  "worktree": {
+    "symlinkDirectories": [
+      "node_modules",
+      "deps",
+      "_build",
+      ".elixir_ls"
+    ]
   },
   "permissions": {
     "allow": [
@@ -14,15 +24,26 @@
       "Bash(git log *)",
       "Bash(git branch *)",
       "Bash(git show *)",
-      "Bash(mix test *)",
-      "Bash(mix format *)",
-      "Bash(mix compile *)",
-      "Bash(mix deps.get)",
-      "Bash(mix ecto.migrate)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git stash *)",
+      "Bash(git checkout *)",
+      "Bash(git rebase *)",
+      "Bash(git fetch *)",
+      "Bash(git merge *)",
+      "Bash(mix *)",
+      "Bash(elixir *)",
+      "Bash(iex *)",
       "Bash(npm test *)",
       "Bash(npm run *)",
+      "Bash(npx *)",
       "Bash(gh pr *)",
       "Bash(gh issue *)",
+      "Bash(ffmpeg *)",
+      "Bash(ffprobe *)",
+      "Bash(jq *)",
+      "Bash(brew *)",
+      "Bash(python *)",
       "Bash(* --version)",
       "Bash(* --help)",
       "Bash(which *)",
@@ -32,15 +53,20 @@
       "Bash(sort *)",
       "Bash(head *)",
       "Bash(tail *)",
-      "Bash(python *)"
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(chmod *)"
     ],
     "deny": [
-      "Bash(rm -rf *)",
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~*)",
       "Bash(git push --force *)",
+      "Bash(git push * --force *)",
       "Bash(git reset --hard *)",
       "Bash(git checkout . *)",
       "Bash(git clean -f *)"
     ]
   },
-  "model": "opus"
+  "skipDangerousModePermissionPrompt": true
 }
