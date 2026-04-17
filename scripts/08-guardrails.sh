@@ -14,9 +14,8 @@ install_guardrails() {
   HOOK_DST="${DOTFILES_ROOT}/.git/hooks/pre-commit"
 
   if [ -f "$HOOK_SRC" ]; then
-    cp "$HOOK_SRC" "$HOOK_DST"
-    chmod +x "$HOOK_DST"
-    success "Installed pre-commit hook"
+    chmod +x "$HOOK_SRC"
+    symlink "$HOOK_SRC" "$HOOK_DST"
   else
     info "No pre-commit hook source found, skipping"
   fi
