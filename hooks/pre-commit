@@ -98,8 +98,10 @@ if [ -z "$BLOCKED_PATTERNS" ]; then
   exit 0
 fi
 
-# Only check staged files (not the whole repo)
-STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(md|sh|json|yaml|yml|toml|txt)$' || true)
+# Check every staged file. grep -I skips binaries so we don't need an
+# allow-list of extensions — shell rc files, Brewfile, Lua, conf, etc. all
+# get scanned without being hand-enumerated.
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM || true)
 
 if [ -z "$STAGED_FILES" ]; then
   exit 0
@@ -108,7 +110,7 @@ fi
 VIOLATIONS=""
 for file in $STAGED_FILES; do
   if [ -f "$file" ]; then
-    matches=$(grep -inE "$BLOCKED_PATTERNS" "$file" 2>/dev/null || true)
+    matches=$(grep -InE "$BLOCKED_PATTERNS" "$file" 2>/dev/null || true)
     if [ -n "$matches" ]; then
       VIOLATIONS="$VIOLATIONS\n  $file:\n$(echo "$matches" | sed 's/^/    /')\n"
     fi
