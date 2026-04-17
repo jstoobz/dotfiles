@@ -49,7 +49,7 @@ fi
 
 # ── Clone and install ───────────────────────────────────────────────────────
 
-DOTFILES="${HOME}/dotfiles"
+DOTFILES="${HOME}/.dotfiles"
 git clone https://github.com/jstoobz/dotfiles.git "$DOTFILES" 2>/dev/null \
   || (cd "$DOTFILES" && git pull)
 exec "$DOTFILES/install" --from-step 2 "$@"
