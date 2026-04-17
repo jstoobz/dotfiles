@@ -58,27 +58,38 @@ command_exists() {
   command -v "$@" >/dev/null 2>&1
 }
 
+# Shared backup destination for this install run. Each `./install` invocation
+# gets one timestamped directory; individual steps sourcing utils.sh inherit it.
+: "${BACKUP_DIR:=${HOME}/.dotfiles_backup/$(date +%Y%m%d-%H%M%S)}"
+export BACKUP_DIR
+
+# Move an existing path (file or symlink) into $BACKUP_DIR. No-op if missing.
+archive_path() {
+  local path="$1"
+
+  if [ ! -e "$path" ] && [ ! -L "$path" ]; then
+    return 0
+  fi
+
+  mkdir -p "$BACKUP_DIR"
+  mv "$path" "$BACKUP_DIR/"
+  info "Archived: $path -> $BACKUP_DIR/"
+}
+
 symlink() {
   local src="$1"
   local dst="$2"
 
   if [ -L "$dst" ]; then
-    info "Already linked: $dst"
-  elif [ -e "$dst" ]; then
-    info "Exists (not a symlink): $dst — skipping"
-  else
-    ln -sf "$src" "$dst"
-    success "Linked: $dst -> $src"
+    local existing
+    existing="$(readlink "$dst")"
+    if [ "$existing" = "$src" ]; then
+      info "Already linked: $dst"
+      return
+    fi
   fi
-}
 
-backup_if_exists() {
-  local file="$1"
-  local backup_dir="$2"
-
-  if [ -e "$file" ] && [ ! -L "$file" ]; then
-    mkdir -p "$backup_dir"
-    cp -a "$file" "$backup_dir/"
-    info "Backed up: $file -> $backup_dir/"
-  fi
+  archive_path "$dst"
+  ln -s "$src" "$dst"
+  success "Linked: $dst -> $src"
 }

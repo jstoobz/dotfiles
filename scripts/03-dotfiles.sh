@@ -8,19 +8,8 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 DOTFILES_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 . "${SCRIPT_DIR}/../lib/utils.sh"
 
-BACKUP_DIR="${HOME}/.dotfiles_backup/$(date +%Y%m%d-%H%M%S)"
-
 link_dotfiles() {
   info "Setting up config symlinks"
-
-  # Back up existing real files (skip if already symlinks)
-  backup_if_exists "${HOME}/.zshrc" "$BACKUP_DIR"
-  backup_if_exists "${HOME}/.gitignore_global" "$BACKUP_DIR"
-  backup_if_exists "${HOME}/.editorconfig" "$BACKUP_DIR"
-  backup_if_exists "${HOME}/.hushlogin" "$BACKUP_DIR"
-  backup_if_exists "${HOME}/.iex.exs" "$BACKUP_DIR"
-  backup_if_exists "${HOME}/.config/nvim/init.lua" "$BACKUP_DIR"
-  backup_if_exists "${HOME}/.tmux.conf" "$BACKUP_DIR"
 
   # Ensure XDG directories exist
   mkdir -p "${HOME}/.config/zsh"
