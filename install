@@ -6,6 +6,7 @@
 #   ./install                    Run all steps
 #   ./install --from-step 3      Resume from step N
 #   ./install --only dotfiles    Run a single step by name
+#   ./install --verify           Check installed state without mutating
 #   ./install --dry-run          Show what would happen
 #   ./install --list             List available steps
 # ============================================================================
@@ -81,6 +82,7 @@ run_step() {
 FROM_STEP=""
 ONLY_STEP=""
 DRY_RUN=""
+VERIFY=""
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -96,12 +98,16 @@ while [ $# -gt 0 ]; do
       DRY_RUN="1"
       shift
       ;;
+    --verify)
+      VERIFY="1"
+      shift
+      ;;
     --list)
       list_steps
       exit 0
       ;;
     --help|-h)
-      echo "Usage: ./install [--from-step N] [--only NAME] [--dry-run] [--list]"
+      echo "Usage: ./install [--from-step N] [--only NAME] [--verify] [--dry-run] [--list]"
       exit 0
       ;;
     *)
@@ -120,6 +126,11 @@ banner
 OSX_VERS=$(sw_vers -productVersion)
 SW_BUILD=$(sw_vers -buildVersion)
 info "macOS ${OSX_VERS} (${SW_BUILD})"
+
+if [ "$VERIFY" = "1" ]; then
+  bash -e "${DOTFILES_ROOT}/scripts/verify.sh"
+  exit $?
+fi
 
 if [ "$DRY_RUN" = "1" ]; then
   info "DRY RUN — no changes will be made"
