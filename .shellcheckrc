@@ -1,0 +1,7 @@
+# SC1091: scripts source lib/utils.sh via ${SCRIPT_DIR}/../lib/utils.sh.
+# The path is correct but shellcheck can't resolve it statically.
+disable=SC1091
+
+# SC2001: sed with a \n literal can't be trivially rewritten as a parameter
+# expansion. The current form is clear; disable the style nag.
+disable=SC2001

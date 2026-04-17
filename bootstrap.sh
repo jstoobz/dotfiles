@@ -13,7 +13,7 @@ GREEN='\033[0;32m'
 BOLD='\033[1m'
 RESET='\033[0m'
 
-printf "${GREEN}${BOLD}"
+printf '%s%s' "$GREEN" "$BOLD"
 cat <<'EOF'
 
        _     _              _
@@ -25,7 +25,7 @@ cat <<'EOF'
         By James Stephens (jstoobz)
 
 EOF
-printf "${RESET}"
+printf '%s' "$RESET"
 
 # ── Sudo keepalive ──────────────────────────────────────────────────────────
 
