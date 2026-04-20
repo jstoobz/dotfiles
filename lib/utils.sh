@@ -44,6 +44,16 @@ fail() {
   printf "\r\033[2K  [\033[0;31mFAIL\033[0m] $1\n"
 }
 
+warn() {
+  # shellcheck disable=SC2059
+  printf "\r\033[2K  [\033[0;33mWARN\033[0m] $1\n"
+}
+
+step() {
+  # shellcheck disable=SC2059
+  printf "\n==> \033[1m$1\033[0m\n"
+}
+
 clr_screen() {
   # shellcheck disable=SC2059
   printf "\033c"
@@ -92,4 +102,52 @@ symlink() {
   archive_path "$dst"
   ln -s "$src" "$dst"
   success "Linked: $dst -> $src"
+}
+
+# Counters for apply_default / apply_sudo_default. Callers reset these per
+# section and print a summary at the end.
+DEFAULTS_APPLIED=0
+DEFAULTS_FAILED=0
+
+# Run `defaults <args>`, tolerate failure, bump counters. Keeps the scripts
+# idempotent and non-fatal on settings that vary by macOS version.
+apply_default() {
+  local description="$1"
+  shift
+
+  if defaults "$@" 2>/dev/null; then
+    DEFAULTS_APPLIED=$((DEFAULTS_APPLIED + 1))
+  else
+    warn "skip: $description"
+    DEFAULTS_FAILED=$((DEFAULTS_FAILED + 1))
+  fi
+}
+
+apply_sudo_default() {
+  local description="$1"
+  shift
+
+  if sudo defaults "$@" 2>/dev/null; then
+    DEFAULTS_APPLIED=$((DEFAULTS_APPLIED + 1))
+  else
+    warn "skip: $description"
+    DEFAULTS_FAILED=$((DEFAULTS_FAILED + 1))
+  fi
+}
+
+# Set a nested plist value via PlistBuddy. Tries Set first (value exists),
+# falls back to Add (value does not exist). One call per setting instead of
+# the five-line try/Add pattern used in the source scripts.
+#   plist_set <plist> <key-path> <type> <value>
+#   type: bool | integer | string | real | date | data | array | dict
+plist_set() {
+  local plist="$1"
+  local keypath="$2"
+  local type="$3"
+  local value="$4"
+
+  if /usr/libexec/PlistBuddy -c "Set ${keypath} ${value}" "$plist" 2>/dev/null; then
+    return 0
+  fi
+  /usr/libexec/PlistBuddy -c "Add ${keypath} ${type} ${value}" "$plist" 2>/dev/null
 }
