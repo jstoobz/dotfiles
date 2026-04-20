@@ -39,6 +39,7 @@ bash.
 | 08  | `guardrails`    | Install pre-commit hook for this repo           |
 | 09  | `claude-skills` | Symlink Claude Code config and skills           |
 | 10  | `editor`        | VSCodium settings and extensions                |
+| 11  | `macos`         | macOS hardening: defaults, Finder, firewall     |
 
 ## Layout
 
@@ -49,7 +50,8 @@ lib/
   utils.sh                 # Shared: symlink(), archive_path(), colored logging
   sudo-keepalive.sh
 scripts/
-  01-xcode.sh  …  10-editor.sh
+  01-xcode.sh  …  11-macos.sh
+  macos/                   # Step 11 sub-scripts: defaults, finder, security
   verify.sh                # Read-only state check (./install --verify)
 config/                    # Files that get symlinked into $HOME
   editor/  git/  iex/  misc/  mise/  nvim/  tmux/  zsh/

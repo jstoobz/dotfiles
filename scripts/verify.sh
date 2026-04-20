@@ -87,6 +87,17 @@ else
 fi
 
 padding
+info "Checking macOS hardening"
+
+MACOS_MARK="${HOME}/.cache/dotfiles/macos-hardened"
+if [ -f "$MACOS_MARK" ]; then
+  success "macOS hardening last run: $(cat "$MACOS_MARK")"
+else
+  fail "macOS hardening never run — ./install --only macos"
+  FAILED=$((FAILED + 1))
+fi
+
+padding
 if [ "$FAILED" -gt 0 ]; then
   fail "${FAILED} check(s) failed"
   exit 1
