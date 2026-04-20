@@ -34,6 +34,17 @@ export LESS="-R -F -X"
 export LESSHISTFILE="-"
 
 # ============================================================================
+# Privacy / telemetry opt-outs
+# ============================================================================
+
+# Don't report usage analytics to Homebrew.
+export HOMEBREW_NO_ANALYTICS=1
+# Refuse to follow HTTP redirects to insecure (non-HTTPS) hosts.
+export HOMEBREW_NO_INSECURE_REDIRECT=1
+# Require SHA verification for all casks.
+export HOMEBREW_CASK_OPTS="--require-sha"
+
+# ============================================================================
 # Path Configuration
 # ============================================================================
 
