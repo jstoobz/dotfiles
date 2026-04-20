@@ -21,4 +21,5 @@ jobs:
             install \
             lib/*.sh \
             scripts/*.sh \
+            scripts/macos/*.sh \
             hooks/pre-commit
