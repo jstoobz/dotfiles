@@ -31,7 +31,13 @@ STEPS="
 08:guardrails:Pre-commit guardrails hook
 09:claude-skills:Claude Code config + skills
 10:editor:VSCodium editor setup
+11:macos:macOS hardening (defaults, Finder, security)
 "
+
+# Steps that need sudo. --only <step> consults this list; anything not named
+# here runs without ask_for_sudo, so user-space steps don't stall for a
+# password. Full install always asks because step 01 needs it.
+SUDO_STEPS="xcode macos"
 
 step_number() { echo "$1" | cut -d: -f1; }
 step_name()   { echo "$1" | cut -d: -f2; }
@@ -132,11 +138,21 @@ if [ "$VERIFY" = "1" ]; then
   exit $?
 fi
 
+needs_sudo() {
+  # Full install always asks (step 01 runs).
+  if [ -z "$ONLY_STEP" ]; then
+    return 0
+  fi
+  # --only <step>: ask if the step is in SUDO_STEPS.
+  case " $SUDO_STEPS " in
+    *" $ONLY_STEP "*) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
 if [ "$DRY_RUN" = "1" ]; then
   info "DRY RUN — no changes will be made"
-elif [ -z "$ONLY_STEP" ]; then
-  # Full install: step 01 (Xcode CLT) needs sudo. Keepalive prevents a stall
-  # mid-run. For --only, let the individual step prompt if it needs root.
+elif needs_sudo; then
   ask_for_sudo
 fi
 
