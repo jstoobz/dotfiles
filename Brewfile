@@ -101,6 +101,7 @@ brew "pinentry-mac"
 brew "age"          # modern file encryption
 brew "openssh"
 brew "ssh-copy-id"
+cask "lulu"         # outbound firewall (macOS firewall only blocks inbound)
 
 # ============================================================================
 # Databases
