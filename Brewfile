@@ -236,7 +236,7 @@ cask "tailscale-app"  # Mesh VPN
 # ============================================================================
 
 cask "claude"
-cask "claude-code"
+cask "claude-code@latest"  # bleeding-edge channel; "claude-code" is stable
 
 # ============================================================================
 # Fonts
