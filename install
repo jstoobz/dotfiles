@@ -134,7 +134,9 @@ fi
 
 if [ "$DRY_RUN" = "1" ]; then
   info "DRY RUN — no changes will be made"
-else
+elif [ -z "$ONLY_STEP" ]; then
+  # Full install: step 01 (Xcode CLT) needs sudo. Keepalive prevents a stall
+  # mid-run. For --only, let the individual step prompt if it needs root.
   ask_for_sudo
 fi
 
