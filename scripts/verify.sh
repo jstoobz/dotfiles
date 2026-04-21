@@ -51,6 +51,7 @@ check_symlink "${DOTFILES_ROOT}/config/editor/.editorconfig" "${HOME}/.editorcon
 check_symlink "${DOTFILES_ROOT}/config/misc/.hushlogin" "${HOME}/.hushlogin"
 check_symlink "${DOTFILES_ROOT}/config/iex/.iex.exs" "${HOME}/.iex.exs"
 check_symlink "${DOTFILES_ROOT}/config/mise/config.toml" "${HOME}/.config/mise/config.toml"
+check_symlink "${DOTFILES_ROOT}/config/starship/starship.toml" "${HOME}/.config/starship.toml"
 check_symlink "${DOTFILES_ROOT}/config/nvim/init.lua" "${HOME}/.config/nvim/init.lua"
 check_symlink "${DOTFILES_ROOT}/config/tmux/.tmux.conf" "${HOME}/.tmux.conf"
 check_symlink "${DOTFILES_ROOT}/hooks/pre-commit" "${DOTFILES_ROOT}/.git/hooks/pre-commit"

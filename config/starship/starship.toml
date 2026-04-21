@@ -1,0 +1,19 @@
+# Starship prompt config
+# Docs: https://starship.rs/config/
+#
+# Intentionally minimal — Starship defaults are sensible. Uncomment and
+# customize specific modules below as needed. Reference for shapes:
+#
+#   [character]
+#   success_symbol = "[❯](bold green)"
+#   error_symbol = "[❯](bold red)"
+#
+#   [directory]
+#   truncation_length = 3
+#   truncate_to_repo = true
+#
+#   [aws]
+#   symbol = "☁️  "
+#   format = 'on [$symbol($profile )(\($region\) )(\[$duration\] )]($style)'
+
+add_newline = true
