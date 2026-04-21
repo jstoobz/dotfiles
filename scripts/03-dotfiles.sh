@@ -14,6 +14,7 @@ link_dotfiles() {
   # Ensure XDG directories exist
   mkdir -p "${HOME}/.config/zsh"
   mkdir -p "${HOME}/.config/nvim"
+  mkdir -p "${HOME}/.config/mise"
 
   # Symlink configs
   symlink "${DOTFILES_ROOT}/config/zsh/.zshrc" "${HOME}/.zshrc"
@@ -23,7 +24,7 @@ link_dotfiles() {
   symlink "${DOTFILES_ROOT}/config/editor/.editorconfig" "${HOME}/.editorconfig"
   symlink "${DOTFILES_ROOT}/config/misc/.hushlogin" "${HOME}/.hushlogin"
   symlink "${DOTFILES_ROOT}/config/iex/.iex.exs" "${HOME}/.iex.exs"
-  symlink "${DOTFILES_ROOT}/config/mise/.tool-versions" "${HOME}/.tool-versions"
+  symlink "${DOTFILES_ROOT}/config/mise/config.toml" "${HOME}/.config/mise/config.toml"
   symlink "${DOTFILES_ROOT}/config/nvim/init.lua" "${HOME}/.config/nvim/init.lua"
   symlink "${DOTFILES_ROOT}/config/tmux/.tmux.conf" "${HOME}/.tmux.conf"
 

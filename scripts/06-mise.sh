@@ -1,7 +1,7 @@
 #!/bin/sh
 # ============================================================================
 # Step 06: mise version manager + language runtimes
-# Reads from ~/.tool-versions (symlinked from dotfiles)
+# Reads from ~/.config/mise/config.toml (symlinked from dotfiles by step 03)
 # ============================================================================
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -13,16 +13,17 @@ configure_mise() {
 
   eval "$(mise activate sh)"
 
-  TOOL_VERSIONS="${DOTFILES_ROOT}/config/mise/.tool-versions"
+  MISE_CONFIG="${DOTFILES_ROOT}/config/mise/config.toml"
 
-  if [ ! -f "$TOOL_VERSIONS" ]; then
-    fail "No .tool-versions found at ${TOOL_VERSIONS}"
+  if [ ! -f "$MISE_CONFIG" ]; then
+    fail "No config.toml found at ${MISE_CONFIG}"
     return 1
   fi
 
-  symlink "$TOOL_VERSIONS" "${HOME}/.tool-versions"
+  mkdir -p "${HOME}/.config/mise"
+  symlink "$MISE_CONFIG" "${HOME}/.config/mise/config.toml"
 
-  info "Installing runtimes from .tool-versions"
+  info "Installing runtimes from config.toml"
   mise install
   success "Installed runtimes"
 
@@ -33,7 +34,7 @@ configure_mise() {
     mix archive.install hex phx_new --force
     success "Installed Elixir tooling"
   else
-    info "Elixir not in .tool-versions, skipping hex/rebar/phx_new"
+    info "Elixir not declared in config.toml, skipping hex/rebar/phx_new"
   fi
 
   success "Configured mise and language runtimes"
