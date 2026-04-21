@@ -1,4 +1,4 @@
-erlang latest
-elixir latest
-nodejs latest
-yarn latest
+erlang 28.3.2
+elixir 1.19.5-otp-28
+nodejs 24.14.0
+yarn 4.14.1
