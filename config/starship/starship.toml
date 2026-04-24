@@ -1,19 +1,31 @@
 # Starship prompt config
 # Docs: https://starship.rs/config/
-#
-# Intentionally minimal — Starship defaults are sensible. Uncomment and
-# customize specific modules below as needed. Reference for shapes:
-#
-#   [character]
-#   success_symbol = "[❯](bold green)"
-#   error_symbol = "[❯](bold red)"
-#
-#   [directory]
-#   truncation_length = 3
-#   truncate_to_repo = true
-#
-#   [aws]
-#   symbol = "☁️  "
-#   format = 'on [$symbol($profile )(\($region\) )(\[$duration\] )]($style)'
 
 add_newline = true
+command_timeout = 1000
+
+[directory]
+truncation_length = 3
+truncate_to_repo = true
+
+[cmd_duration]
+min_time = 500
+
+# [git_status]
+# Show more expressive symbols for ahead/behind/stashed state.
+# ahead = "⇡${count}"
+# behind = "⇣${count}"
+# diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+# stashed = "📦"
+# modified = "!"
+# staged = "+"
+# untracked = "?"
+
+# Runtime version modules — show language version only in relevant project dirs.
+# Useful alongside mise's per-project pinning.
+# [elixir]
+# symbol = " "
+# [erlang]
+# symbol = " "
+# [nodejs]
+# symbol = " "
