@@ -1,21 +1,12 @@
 {
+  "cleanupPeriodDays": 90,
   "env": {
     "API_TIMEOUT_MS": "3000000",
     "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "70"
   },
-  "cleanupPeriodDays": 90,
-  "showThinkingSummaries": true,
   "attribution": {
     "commit": "",
     "pr": ""
-  },
-  "worktree": {
-    "symlinkDirectories": [
-      "node_modules",
-      "deps",
-      "_build",
-      ".elixir_ls"
-    ]
   },
   "permissions": {
     "allow": [
@@ -56,7 +47,8 @@
       "Bash(mkdir *)",
       "Bash(cp *)",
       "Bash(mv *)",
-      "Bash(chmod *)"
+      "Bash(chmod *)",
+      "Bash(shellcheck *)"
     ],
     "deny": [
       "Bash(rm -rf /*)",
@@ -68,5 +60,16 @@
       "Bash(git clean -f *)"
     ]
   },
-  "skipDangerousModePermissionPrompt": true
+  "model": "sonnet",
+  "worktree": {
+    "symlinkDirectories": [
+      "node_modules",
+      "deps",
+      "_build",
+      ".elixir_ls"
+    ]
+  },
+  "showThinkingSummaries": true,
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "dark-ansi"
 }
