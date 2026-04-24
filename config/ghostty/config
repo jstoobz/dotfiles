@@ -10,3 +10,18 @@ macos-titlebar-style = tabs
 
 copy-on-select = clipboard
 cursor-style-blink = false
+
+# Shell integration: enables cmd+up/down to jump between prompts,
+# cmd+k to clear to last prompt, and prompt-aware selection.
+shell-integration = zsh
+shell-integration-features = cursor,sudo,title
+
+# 1M lines — default 10k gets blown away by a single compile.
+scrollback-limit = 1000000
+
+# Makes Option behave as Alt for vim/readline bindings instead of
+# generating Unicode characters.
+macos-option-as-alt = true
+
+# mouse-hide-while-typing = true
+# confirm-close-surface = true
