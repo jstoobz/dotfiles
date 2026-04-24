@@ -32,6 +32,7 @@ STEPS="
 09:claude-skills:Claude Code config + skills
 10:editor:VSCodium editor setup
 11:macos:macOS hardening (defaults, Finder, security)
+12:apps:Third-party app preferences
 "
 
 # Steps that need sudo. --only <step> consults this list; anything not named
