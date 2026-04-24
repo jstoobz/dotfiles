@@ -32,6 +32,8 @@ link_dotfiles() {
   symlink "${DOTFILES_ROOT}/config/tmux/.tmux.conf" "${HOME}/.tmux.conf"
   mkdir -p "${HOME}/.config/lazygit"
   symlink "${DOTFILES_ROOT}/config/lazygit/config.yml" "${HOME}/.config/lazygit/config.yml"
+  mkdir -p "${HOME}/.config/aerospace"
+  symlink "${DOTFILES_ROOT}/config/aerospace/aerospace.toml" "${HOME}/.config/aerospace/aerospace.toml"
 
   success "Symlinked all config files"
 }

@@ -1,0 +1,115 @@
+# Aerospace config — minimal tiling starter
+# Docs: https://nikitabobko.github.io/AeroSpace/guide
+#
+# Mental model shift from Rectangle:
+#   Rectangle: manually snap a window to a zone (left half, right half, etc.)
+#   Aerospace: windows tile automatically; you move/focus/rearrange with keys.
+#   "Left half" emerges naturally when two windows share a horizontal workspace.
+#   Floating mode (alt-shift-f) is the escape hatch for windows you don't want tiled.
+
+start-at-login = true
+
+# Flatten single-child containers and flip orientation for nested splits.
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+
+# Gap between accordion panes (used when layout = accordion).
+accordion-padding = 30
+
+# New windows tile in the direction that matches the monitor's aspect ratio.
+default-root-container-layout = 'tiles'
+default-root-container-orientation = 'auto'
+
+# Mouse warps to the focused monitor when you switch workspaces.
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+
+# ── Gaps ─────────────────────────────────────────────────────────────────────
+
+[gaps]
+inner.horizontal = 8
+inner.vertical   = 8
+outer.left       = 8
+outer.bottom     = 8
+outer.top        = 8
+outer.right      = 8
+
+# ── Main mode ─────────────────────────────────────────────────────────────────
+# alt = Option key. All day-to-day bindings live here.
+
+[mode.main.binding]
+
+# Focus — move keyboard focus between tiled windows
+alt-h = 'focus left'
+alt-j = 'focus down'
+alt-k = 'focus up'
+alt-l = 'focus right'
+
+# Move — reposition the focused window within the tile tree
+alt-shift-h = 'move left'
+alt-shift-j = 'move down'
+alt-shift-k = 'move up'
+alt-shift-l = 'move right'
+
+# Layout — cycle between horizontal tiles and vertical tiles
+alt-slash = 'layout tiles horizontal vertical'
+# Layout — accordion stacks windows in a fan; good for many windows on one workspace
+alt-comma = 'layout accordion horizontal vertical'
+
+# Float toggle — pull a window out of tiling (equivalent to Rectangle "ignore")
+alt-shift-f = 'layout floating tiling'
+
+# Native macOS fullscreen (the green button behaviour)
+alt-f = 'fullscreen'
+
+# Workspaces — switch with alt+number
+alt-1 = 'workspace 1'
+alt-2 = 'workspace 2'
+alt-3 = 'workspace 3'
+alt-4 = 'workspace 4'
+alt-5 = 'workspace 5'
+alt-6 = 'workspace 6'
+alt-7 = 'workspace 7'
+alt-8 = 'workspace 8'
+alt-9 = 'workspace 9'
+
+# Move window to workspace (and follow it)
+alt-shift-1 = ['move-node-to-workspace 1', 'workspace 1']
+alt-shift-2 = ['move-node-to-workspace 2', 'workspace 2']
+alt-shift-3 = ['move-node-to-workspace 3', 'workspace 3']
+alt-shift-4 = ['move-node-to-workspace 4', 'workspace 4']
+alt-shift-5 = ['move-node-to-workspace 5', 'workspace 5']
+alt-shift-6 = ['move-node-to-workspace 6', 'workspace 6']
+alt-shift-7 = ['move-node-to-workspace 7', 'workspace 7']
+alt-shift-8 = ['move-node-to-workspace 8', 'workspace 8']
+alt-shift-9 = ['move-node-to-workspace 9', 'workspace 9']
+
+# Jump back to the previous workspace (toggle between two)
+alt-tab = 'workspace-back-and-forth'
+# Move current workspace to next monitor (useful with external display)
+alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
+
+# Enter resize mode
+alt-r = 'mode resize'
+
+# Enter service mode (config reload, layout recovery)
+alt-shift-semicolon = 'mode service'
+
+# ── Resize mode ───────────────────────────────────────────────────────────────
+# Press alt-r to enter, then hjkl to resize, esc/enter to exit.
+
+[mode.resize.binding]
+h = 'resize width -50'
+l = 'resize width +50'
+k = 'resize height -50'
+j = 'resize height +50'
+esc   = 'mode main'
+enter = 'mode main'
+
+# ── Service mode ──────────────────────────────────────────────────────────────
+# Rarely used. alt-shift-; to enter.
+
+[mode.service.binding]
+esc       = 'mode main'
+r         = ['reload-config', 'mode main']
+f         = ['flatten-workspace-tree', 'mode main']   # recover a broken layout
+backspace = ['close-all-windows-but-current', 'mode main']
