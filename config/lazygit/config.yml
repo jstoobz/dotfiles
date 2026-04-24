@@ -1,0 +1,99 @@
+# Lazygit configuration
+# https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md
+
+gui:
+  timeFormat: "02 Jan 06"
+  theme:
+    activeBorderColor:
+      - "#bd93f9"  # Dracula purple
+      - "bold"
+    inactiveBorderColor:
+      - "#6272a4"  # Dracula comment
+    selectedLineBgColor:
+      - "#44475a"  # Dracula selection
+  showFileTree: true
+  showListFooter: false
+  showRandomTip: false
+  showCommandLog: false
+  showBottomLine: false
+  nerdFontsVersion: "3"
+  # commitLength:
+  #   show: true    # Character counter while composing commit messages
+  # mouseEvents: false  # Enforce keyboard-only flow
+
+git:
+  paging:
+    colorArg: always
+    pager: delta --paging=never --line-numbers --syntax-theme="Dracula"
+  commit:
+    signOff: false
+  merging:
+    manualCommit: false
+    args: ""
+  pull:
+    mode: "rebase"
+  log:
+    showGraph: "always"
+  autoFetch: true
+  autoRefresh: true
+  branchLogCmd: "git log --graph --color=always --abbrev-commit --decorate --date=relative --pretty=medium {{branchName}} --"
+  allBranchesLogCmd: "git log --graph --all --color=always --abbrev-commit --decorate --date=relative --pretty=medium"
+  overrideGpg: false
+  disableForcePushing: false
+  parseEmoji: true
+
+os:
+  editPreset: "vscode"
+
+refresher:
+  refreshInterval: 10
+  fetchInterval: 60
+
+confirmOnQuit: false
+quitOnTopLevelReturn: true
+
+keybinding:
+  universal:
+    quit: "q"
+    quit-alt1: "<c-c>"
+    return: "<esc>"
+    togglePanel: "<tab>"
+    prevItem: "<up>"
+    nextItem: "<down>"
+    prevPage: ","
+    nextPage: "."
+    scrollLeft: "H"
+    scrollRight: "L"
+    gotoTop: "<"
+    gotoBottom: ">"
+    prevBlock: "<left>"
+    nextBlock: "<right>"
+    nextMatch: "n"
+    prevMatch: "N"
+    startSearch: "/"
+    optionMenu: "?"
+    edit: "e"
+    openFile: "o"
+    scrollUpMain: "<pgup>"
+    scrollDownMain: "<pgdown>"
+    scrollUpMainAlt1: "K"
+    scrollDownMainAlt1: "J"
+    executeCustomCommand: ":"
+    createRebaseOptionsMenu: "m"
+    pushFiles: "P"
+    pullFiles: "p"
+    refresh: "R"
+    createPatchOptionsMenu: "<c-p>"
+    nextTab: "]"
+    prevTab: "["
+    nextScreenMode: "+"
+    prevScreenMode: "_"
+    undo: "z"
+    redo: "<c-z>"
+    filteringMenu: "<c-s>"
+    diffingMenu: "W"
+    copyToClipboard: "<c-o>"
+    submitEditorText: "<enter>"
+    appendNewline: "<a-enter>"
+    extrasMenu: "@"
+    toggleWhitespaceInDiffView: "<c-w>"
