@@ -84,8 +84,9 @@ setopt HIST_IGNORE_ALL_DUPS      # Remove older duplicate
 setopt HIST_IGNORE_SPACE         # Don't record space-prefixed commands
 setopt HIST_FIND_NO_DUPS         # No duplicates in search
 setopt HIST_SAVE_NO_DUPS         # Don't save duplicates
-setopt SHARE_HISTORY             # Share history between sessions
-setopt INC_APPEND_HISTORY        # Add immediately
+setopt HIST_REDUCE_BLANKS        # Strip superfluous whitespace before saving
+setopt SHARE_HISTORY             # Share history between sessions + immediate append
+# setopt HIST_VERIFY             # Show history expansion before executing (!! etc.)
 
 # Directory
 setopt AUTO_CD                   # cd by typing directory name
@@ -102,7 +103,7 @@ setopt AUTO_MENU                 # Show menu on tab
 # Misc
 setopt INTERACTIVE_COMMENTS      # Allow comments in interactive
 setopt NO_BEEP                   # No beeping
-setopt CORRECT                   # Spelling correction
+setopt NO_FLOW_CONTROL           # Disable ctrl+s/ctrl+q terminal freeze
 setopt EXTENDED_GLOB             # Extended globbing
 
 # ============================================================================
