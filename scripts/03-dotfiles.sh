@@ -34,6 +34,8 @@ link_dotfiles() {
   symlink "${DOTFILES_ROOT}/config/lazygit/config.yml" "${HOME}/.config/lazygit/config.yml"
   mkdir -p "${HOME}/.config/aerospace"
   symlink "${DOTFILES_ROOT}/config/aerospace/aerospace.toml" "${HOME}/.config/aerospace/aerospace.toml"
+  mkdir -p "${HOME}/.config/pgcli"
+  symlink "${DOTFILES_ROOT}/config/pgcli/config" "${HOME}/.config/pgcli/config"
 
   success "Symlinked all config files"
 }
