@@ -48,7 +48,9 @@
       "Bash(cp *)",
       "Bash(mv *)",
       "Bash(chmod *)",
-      "Bash(shellcheck *)"
+      "Bash(shellcheck *)",
+      "Bash(utmctl list)",
+      "Bash(utmctl status *)"
     ],
     "deny": [
       "Bash(rm -rf /*)",
@@ -60,7 +62,7 @@
       "Bash(git clean -f *)"
     ]
   },
-  "model": "sonnet",
+  "model": "claude-opus-4-6",
   "worktree": {
     "symlinkDirectories": [
       "node_modules",
@@ -69,6 +71,7 @@
       ".elixir_ls"
     ]
   },
+  "effortLevel": "medium",
   "showThinkingSummaries": true,
   "skipDangerousModePermissionPrompt": true,
   "theme": "dark-ansi"
