@@ -38,4 +38,16 @@ generate_gitconfig() {
   success "Generated .gitconfig for ${git_name} <${git_email}>"
 }
 
+setup_gh_aliases() {
+  if ! command -v gh >/dev/null 2>&1; then
+    info "gh not installed, skipping aliases"
+    return
+  fi
+
+  info "Setting up gh aliases"
+  gh alias set co 'pr checkout' 2>/dev/null
+  success "Configured gh aliases"
+}
+
 generate_gitconfig
+setup_gh_aliases
