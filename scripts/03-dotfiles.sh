@@ -42,6 +42,8 @@ link_dotfiles() {
   symlink "${DOTFILES_ROOT}/config/ripgrep/.ripgreprc" "${HOME}/.config/ripgrep/.ripgreprc"
   mkdir -p "${HOME}/.ssh"
   symlink "${DOTFILES_ROOT}/config/ssh/config" "${HOME}/.ssh/config"
+  mkdir -p "${HOME}/.config/direnv"
+  symlink "${DOTFILES_ROOT}/config/direnv/direnv.toml" "${HOME}/.config/direnv/direnv.toml"
 
   success "Symlinked all config files"
 }
