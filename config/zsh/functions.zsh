@@ -303,14 +303,30 @@ remsh() {
 # FZF Integration
 # ============================================================================
 
-# fzf + git log
+# fzf + git log (preview with delta)
 fgl() {
-  git log --oneline --decorate --color | fzf --ansi --preview 'git show --color=always {+1}' | awk '{print $1}'
+  git log --oneline --decorate --color | fzf --ansi --preview 'git show --color=always {+1} | delta' | awk '{print $1}'
 }
 
-# fzf + git branch
+# fzf + git branch (excludes HEAD, strips remote prefix for checkout)
 fbr() {
-  git branch -a --color | fzf --ansi | sed 's/^\*//;s/^ *//' | xargs git checkout
+  local branch
+  branch=$(git branch -a --color | grep -v 'HEAD' | fzf --ansi | sed 's/^\*//;s/^ *//' | sed 's|remotes/origin/||')
+  if [[ -n "$branch" ]]; then
+    git checkout "$branch"
+  fi
+}
+
+# fzf + ripgrep (search contents, open at line)
+frg() {
+  local selection
+  selection=$(rg --line-number --color=always "${1:-.}" | fzf --ansi --delimiter=: --preview 'bat --style=numbers --color=always --highlight-line {2} {1}' --preview-window='+{2}-5')
+  if [[ -n "$selection" ]]; then
+    local file line
+    file=$(echo "$selection" | cut -d: -f1)
+    line=$(echo "$selection" | cut -d: -f2)
+    ${EDITOR:-vim} "$file:$line"
+  fi
 }
 
 # fzf + process kill
