@@ -1,0 +1,5 @@
+--theme="ansi"
+--style="numbers,changes"
+--italic-text=always
+--map-syntax="*.envrc:Bash"
+--map-syntax=".iex.exs:Elixir"

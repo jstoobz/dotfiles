@@ -36,6 +36,12 @@ link_dotfiles() {
   symlink "${DOTFILES_ROOT}/config/aerospace/aerospace.toml" "${HOME}/.config/aerospace/aerospace.toml"
   mkdir -p "${HOME}/.config/pgcli"
   symlink "${DOTFILES_ROOT}/config/pgcli/config" "${HOME}/.config/pgcli/config"
+  mkdir -p "${HOME}/.config/bat"
+  symlink "${DOTFILES_ROOT}/config/bat/config" "${HOME}/.config/bat/config"
+  mkdir -p "${HOME}/.config/ripgrep"
+  symlink "${DOTFILES_ROOT}/config/ripgrep/.ripgreprc" "${HOME}/.config/ripgrep/.ripgreprc"
+  mkdir -p "${HOME}/.ssh"
+  symlink "${DOTFILES_ROOT}/config/ssh/config" "${HOME}/.ssh/config"
 
   success "Symlinked all config files"
 }
