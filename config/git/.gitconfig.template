@@ -8,8 +8,27 @@
 	autocrlf = false
 	excludesfile = __HOME_DIR__/.gitignore_global
 	eol = lf
+	pager = delta
 [init]
 	defaultBranch = main
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+	side-by-side = true
+	line-numbers = true
+[diff]
+	colorMoved = default
+[merge]
+	conflictstyle = zdiff3
+[pull]
+	rebase = true
+[push]
+	autoSetupRemote = true
+[rebase]
+	autoStash = true
+[rerere]
+	enabled = true
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
