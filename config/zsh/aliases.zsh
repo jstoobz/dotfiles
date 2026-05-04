@@ -102,7 +102,7 @@ alias gd='git diff'
 alias gds='git diff --staged'
 alias gl='git log --oneline -20'
 alias gla='git log --oneline --all --graph -20'
-alias glg='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit'
+alias gcp='git cherry-pick'
 alias gst='git stash'
 alias gstp='git stash pop'
 alias gstl='git stash list'
@@ -112,7 +112,6 @@ alias grbc='git rebase --continue'
 alias grba='git rebase --abort'
 alias grs='git reset'
 alias grsh='git reset --hard'
-alias gchp='git cherry-pick'
 alias gm='git merge'
 alias gclean='git clean -fd'
 alias gwip='git add -A && git commit -m "WIP"'
@@ -141,6 +140,7 @@ alias mes='mix ecto.setup'
 alias mesd='mix ecto.seed'
 alias mers='mix ecto.reset'
 alias megen='mix ecto.gen.migration'
+alias mdt='mix deps.tree'
 
 # ============================================================================
 # Docker
@@ -189,9 +189,6 @@ alias bservices='brew services list'
 # Network
 # ============================================================================
 
-alias ip='curl -s ipinfo.io/ip'
-alias localip='ipconfig getifaddr en0'
-alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
 alias ports='lsof -iTCP -sTCP:LISTEN -n -P'
 alias ping='ping -c 5'
 alias flushdns='sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder'
@@ -232,13 +229,6 @@ alias cheat='glow ~/.cheatsheets/'
 # ============================================================================
 # Misc Utilities
 # ============================================================================
-
-# Weather
-alias weather='curl -s "wttr.in?format=3"'
-alias weatherfull='curl -s "wttr.in"'
-
-# Generate random password
-alias randpw='openssl rand -base64 24'
 
 # URL encode/decode
 alias urlencode='python3 -c "import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1]))"'

@@ -119,20 +119,10 @@ gnb() {
   git checkout main && git pull && git checkout -b "$branch"
 }
 
-# Interactive rebase on main
-grim() {
+# Interactive rebase on last N commits
+grebi() {
   local count="${1:-10}"
   git rebase -i HEAD~"$count"
-}
-
-# Git commit with message
-gcmsg() {
-  git commit -m "$*"
-}
-
-# Checkout to previous branch
-gprev() {
-  git checkout -
 }
 
 # Pretty git log
