@@ -33,6 +33,9 @@ export SAVEHIST=50000
 export LESS="-R -F -X"
 export LESSHISTFILE="-"
 
+# Ripgrep
+export RIPGREP_CONFIG_PATH="${XDG_CONFIG_HOME}/ripgrep/.ripgreprc"
+
 # ============================================================================
 # Privacy / telemetry opt-outs
 # ============================================================================

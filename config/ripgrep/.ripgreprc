@@ -1,0 +1,6 @@
+--smart-case
+--hidden
+--glob=!.git
+--glob=!deps
+--glob=!_build
+--glob=!node_modules
