@@ -124,6 +124,7 @@ end
 
 ```elixir
 defmodule MyApp.Accounts.User do
+  @snapshot_version 1   # bump whenever the struct shape below changes
   defstruct [:user_id, :email, :name, :status]
 
   alias MyApp.Accounts.Commands.{RegisterUser, UpdateEmail}
@@ -160,7 +161,7 @@ defmodule MyApp.Accounts.User do
 end
 ```
 
-**Rule:** `execute/2` and `apply/2` must be **pure**. No `Repo.get`, no `HTTPoison`, no `DateTime.utc_now()` outside of stamping a value into the event. State decisions come from the aggregate struct, not from external lookups.
+**Rule:** `execute/2` and `apply/2` must be **pure** — no `Repo`, no `HTTPoison`, no external reads. **Exception:** timestamps (`DateTime.utc_now()`) and UUIDs may be generated *inside* `execute/2` to stamp a value into the event itself. The event then carries that timestamp forever — replaying the event uses the original value, preserving determinism. Never read external state to *decide* what events to emit; the aggregate struct is the only input.
 
 ### Router
 
@@ -205,8 +206,16 @@ defmodule MyApp.Onboarding.WelcomeProcess do
   def apply(%__MODULE__{} = state, %UserRegistered{user_id: id}) do
     %__MODULE__{state | user_id: id, status: :welcomed}
   end
+
+  # Tear down the process manager when the workflow completes.
+  # Without this, state persists indefinitely.
+  def apply(%__MODULE__{} = state, %WelcomeEmailSent{}) do
+    {:stop, %__MODULE__{state | status: :completed}}
+  end
 end
 ```
+
+**Rule:** Process Manager state persists across restarts — it's stored in the event store like any other stream. Return `{:stop, new_state}` from `apply/2` when the workflow completes, otherwise zombie process managers accumulate forever.
 
 ### Projection (read model)
 
@@ -248,13 +257,26 @@ defmodule MyApp.Notifications.WelcomeEmailHandler do
     consistency: :eventual
 
   alias MyApp.Accounts.Events.UserRegistered
+  alias MyApp.Notifications.EmailLog
 
-  def handle(%UserRegistered{email: email, name: name}, _meta) do
-    MyApp.Mailer.send_welcome(email, name)
-    :ok
+  # Idempotent: at-least-once delivery means this can fire twice for the
+  # same event. Check-before-write (or rely on a unique constraint) so
+  # the second delivery is a no-op.
+  def handle(%UserRegistered{user_id: id, email: email, name: name}, _meta) do
+    case MyApp.Repo.get_by(EmailLog, user_id: id, type: "welcome") do
+      nil ->
+        MyApp.Mailer.send_welcome(email, name)
+        MyApp.Repo.insert!(%EmailLog{user_id: id, type: "welcome"})
+        :ok
+
+      _already_sent ->
+        :ok
+    end
   end
 end
 ```
+
+**Rule:** Event handlers must be idempotent — Commanded delivers at-least-once, and replaying handlers (e.g., during a reset) re-fires every event. Many handlers are naturally idempotent (upserts, `Repo.insert(..., on_conflict: :nothing)`, projections via `Ecto.Multi`). Side-effecting handlers (email, webhook) need explicit deduplication.
 
 ### Dispatch
 
@@ -336,7 +358,7 @@ end
 
 **Why it bites:** Old events in the store still have the old field name (or different semantics under the same name). Replay deserializes them and your `apply/2` gets unexpected shapes. Production crashes on every cold start.
 
-**Instead:** Add a new field (default nil), or define `UserRegisteredV2` and write an upcaster that converts V1 events to V2 on read. Never mutate event semantics in place.
+**Instead:** Add a new field (default nil), or define `UserRegisteredV2` and write an upcaster (see `references/event-versioning.md`) that converts V1 events to V2 on read. Never mutate event semantics in place.
 
 ### Don't: read your own writes synchronously without `:strong` consistency
 
@@ -355,7 +377,15 @@ user = MyApp.Repo.get(User, id)   # may be nil — projection hasn't caught up
 - **Aggregates spawn lazily and idle out** — Commanded starts an aggregate process on first dispatch, hydrates state from the event store, then idles per the configured lifespan. Cold starts pay the replay cost; hot aggregates don't.
 - **Snapshots break on state shape changes** — bump `@snapshot_version` whenever the aggregate struct changes. Old snapshots are discarded and the aggregate replays from events.
 - **Event handlers must be idempotent** — Commanded retries failed handlers, and at-least-once delivery means the same event can be processed twice. Use unique constraints, idempotency keys, or check-before-write logic.
-- **`:strong` consistency only blocks on handlers explicitly marked `:strong`** — declaring `consistency: :strong` on the dispatch doesn't promote `:eventual` handlers. Match the consistency mode at both ends.
+- **`:strong` consistency only blocks on handlers explicitly marked `:strong`** — declaring `consistency: :strong` on the dispatch doesn't promote `:eventual` handlers. Both ends must agree:
+  ```elixir
+  # Handler side — declare strong on the use macro
+  use Commanded.Projections.Ecto, consistency: :strong
+
+  # Dispatch side — request strong
+  MyApp.Router.dispatch(cmd, consistency: :strong)
+  ```
+  If only one side declares it, the dispatch returns before this handler completes.
 - **Process Manager state persists indefinitely unless you complete it** — return `:stop` from `handle/2` to tear down. Otherwise zombie process managers accumulate forever.
 - **Subscription names must be globally unique within the application** — duplicates cause one handler to silently never fire. The `name:` option is the subscription identifier in the event store.
 - **`identify` `prefix:` matters for stream naming** — changing the prefix orphans existing streams. Pick the convention up front and keep it.
