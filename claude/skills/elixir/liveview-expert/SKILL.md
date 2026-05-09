@@ -70,7 +70,7 @@ Where should this piece of state live?
 ├── User identity, persists across LiveViews? → Session (mount via live_session)
 ├── Source of truth, queryable elsewhere? → Database (load in mount)
 ├── UI-only, ephemeral, lost on reconnect is fine? → Socket assigns
-└── Cross-LiveView pub/sub? → Phoenix.PubSub (subscribe in mount, handle_info)
+└── Cross-LiveView pub/sub? → Phoenix.PubSub (subscribe in mount, handle_info — see `phoenix-expert` for PubSub setup and topic conventions)
 ```
 
 ## Decision Tree: Navigation
@@ -240,7 +240,7 @@ end
 </.form>
 ```
 
-**Rule:** Always use `to_form/1` — never `assign(:changeset, ...)`. The `Phoenix.HTML.Form` struct carries error/change state for `<.input>` to render correctly.
+**Rule:** Always use `to_form/1` — never `assign(:changeset, ...)`. The `Phoenix.HTML.Form` struct carries error/change state for `<.input>` to render correctly. (See `ecto-expert` for changeset construction, validation, and error helper patterns.)
 
 ### File uploads
 

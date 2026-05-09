@@ -245,7 +245,7 @@ defmodule MyApp.Accounts.Projections.UserProjection do
 end
 ```
 
-**Rule:** Projections use `Ecto.Multi` so the projection write and Commanded's tracking offset are committed atomically. Never bypass the multi.
+**Rule:** Projections use `Ecto.Multi` so the projection write and Commanded's tracking offset are committed atomically. Never bypass the multi. (See `ecto-expert` for read-model schema design and Multi composition patterns.)
 
 ### Event Handler (side effect)
 
