@@ -176,7 +176,7 @@ end)
 end
 ```
 
-**Rule:** Reach for `Multi` whenever 2+ writes need to commit together OR the second write depends on the first's primary key. The `{:error, failed_op, changeset, changes}` shape tells you exactly which step failed and what state was rolled back.
+**Rule:** Reach for `Multi` whenever 2+ writes need to commit together OR the second write depends on the first's primary key. The error shape is `{:error, failed_op, failed_value, changes_so_far}` — `failed_value` is usually a changeset (the common case shown above), but a `Multi.run/3` step can return `{:error, anything}`, so the third element isn't guaranteed to be a changeset. Pattern-match accordingly.
 
 ### `Ecto.ParameterizedType` for runtime-shaped fields
 
@@ -371,8 +371,8 @@ end
 - **`Repo.preload` doesn't reload** — calling `Repo.preload(user, :posts)` when posts are already loaded is a no-op. To force fresh: `Repo.preload(user, :posts, force: true)`.
 - **`Repo.transaction(fn -> ... end)` differs from `Repo.transaction(multi)`** — the function form expects you to return `{:error, _}` or call `Repo.rollback/1` to abort. Multi handles all of this automatically. Prefer Multi for clarity.
 - **`embedded_schema` has no `id` by default** — the embedded struct doesn't get a primary key unless you declare one. Useful for value objects (address, money), confusing if you expected a normal schema.
-- **`insert_all/3` returns `{count, returning}` not `{:ok, _}`** — the contract is `{rows_affected, list_of_returned_columns_or_nil}`. Treating it as a normal Repo write breaks; always destructure the tuple.
-- **Sandbox `:auto` mode kills async tests** — for `async: true` tests you need per-test checkout via `:manual` mode and `Sandbox.checkout/1` in setup. (See `elixir-testing-expert` for the pattern.)
+- **`insert_all/3` returns `{count, returning}` not `{:ok, _}`** — without `:returning`, the second element is `nil` (`{count, nil}`). With `returning: [:id, :email]`, it's a list of maps (`{count, [%{id: ..., email: ...}, ...]}`). Treating it as a normal Repo write breaks; always destructure the tuple.
+- **Sandbox `:auto` mode requires `async: false`** — `:auto` uses a single shared transaction across the suite, which precludes parallel runs. For `async: true` tests, switch to `:manual` mode and call `Sandbox.checkout/1` in each test's setup. (See `elixir-testing-expert` for the pattern.)
 - **Changesets retain the original struct, not the merged data** — `cs.data` is the input struct, `cs.changes` is the diff, `Ecto.Changeset.apply_changes/1` materializes the merged result. Reading `cs.data.email` after a cast won't show the new email.
 
 ## Quick Reference
