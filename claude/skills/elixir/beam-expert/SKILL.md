@@ -142,6 +142,9 @@ end
 def feature_enabled?(flag) do
   :persistent_term.get({MyApp, :feature_flags}, %{})[flag] || false
 end
+
+# NEVER in a request handler — this triggers global GC of every reader process:
+# :persistent_term.put({MyApp, :feature_flags}, new_flags)  # ❌
 ```
 
 **Rule:** `:persistent_term` is the right choice when reads vastly outnumber writes. Writing triggers a global GC of every process that has read the term — fine at boot, catastrophic per-request. Use namespaced tuple keys (`{MyApp, :name}`) to avoid global collisions.
@@ -242,7 +245,7 @@ def init(opts) do
 end
 ```
 
-**Why it bites:** `init/1` blocks the supervisor. If it takes longer than the supervisor's `:timeout` (default 5s), the supervisor kills the child and retries — possibly forever. The whole supervision tree above is also blocked from coming up.
+**Why it bites:** `init/1` blocks the supervisor. If it takes longer than the supervisor's `:timeout` (typically 5s), the supervisor kills the child and retries — possibly forever. The whole supervision tree above is also blocked from coming up.
 
 **Instead:**
 
@@ -317,14 +320,14 @@ end
 
 ## Common Gotchas
 
-- **`erlang:phash2` over maps with >32 keys is unstable** — Maps switch internal representation from sorted `flat_map` to HAMT once they exceed 32 keys. `phash2` hashes the term representation, so two logically-equal maps can produce different hashes if one has ≤32 keys and the other has >32. Burns hashing pipelines that compare structural snapshots. If you need stable hashing of maps that may grow, hash a sorted list of keys/values instead.
+- **`erlang:phash2` over maps with >32 keys is unstable** — Maps switch internal representation from sorted `flat_map` to HAMT once they exceed 32 keys. `phash2` hashes the term representation, so two logically-equal maps can produce different hashes if one has ≤32 keys and the other has >32. Burns hashing pipelines that compare structural snapshots. If you need stable hashing of maps that may grow, normalize the structure first: `map |> Map.to_list() |> Enum.sort() |> :erlang.phash2()`.
 - **`Process.send/3` to a dead pid silently succeeds** — sends to dead processes return `:ok` and the message is dropped. Use `Process.alive?/1` only as a hint (TOCTOU race), or use `Process.monitor/1` for real "is it gone" semantics.
 - **Mailbox growth is your responsibility** — there's no built-in backpressure on `send/2`. A slow receiver with fast senders accumulates messages until OOM. Use `GenStage`/`Broadway` for demand-driven flow, or selective receive + drop policy.
 - **`:hibernate` is not free** — returning `{:noreply, state, :hibernate}` releases the process heap, but the next message triggers a full GC and heap reallocation. Worth it for processes idle for minutes; counterproductive for processes idle for milliseconds.
 - **ETS `:public` writes from many processes have no multi-op atomicity** — single operations (`insert`, `update_counter`) are atomic, but `lookup + insert` is not. Use `:ets.update_counter/3` for atomic increments, `:ets.insert_new/2` for "insert if absent", or guard multi-step writes through a single GenServer.
 - **`:persistent_term` writes trigger global GC** — every process that has ever read the term gets GC'd on every write. Write at boot or on rare config changes; never per-request.
 - **Linked process crash propagates synchronously** — when a linked process exits abnormally, your process receives an `:EXIT` signal that (without `trap_exit`) terminates yours immediately. Choose `link` vs `monitor` deliberately.
-- **`Process.set_label/1` only shows in observer / `:recon`** — it does NOT appear in `Process.info(pid, :label)` until OTP includes the inspection hook (varies by version). Useful for visual debugging tools, not for runtime lookup logic.
+- **`Process.set_label/1` is debugger-visible only (OTP 27+)** — the label shows in `:observer` and `:recon`, but does NOT surface via `Process.info(pid, :label)` until future inspection hooks land. Use it for visual identification in debugging tools; don't build runtime lookup logic on top of it.
 - **Registry vs `:global` vs `:pg` have different distribution semantics** — Registry is local-only (per-node), `:global` is cluster-wide but slow on conflict, `:pg` (process groups) is for many-to-many notification. Don't pick by name familiarity.
 
 ## Quick Reference
