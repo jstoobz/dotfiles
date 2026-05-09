@@ -180,7 +180,7 @@ end
 assert %{success: 1, failure: 0} = Oban.drain_queue(queue: :notifications)
 ```
 
-## References
+## When to Load Deeper References
 
-- `references/advanced-patterns.md` — Cron, plugins, batch jobs, multi-step pipelines
-- `references/testing-recipes.md` — Test helpers, integration testing, drain patterns
+- Building cron jobs, plugins, batch jobs, or multi-step pipelines? → Read `references/advanced-patterns.md`
+- Writing integration tests, drain patterns, or custom helpers for Oban jobs? → Read `references/testing-recipes.md`

@@ -132,8 +132,8 @@ end
 - **Decimal** — use `Decimal` for money, never Float
 - **String vs charlist** — `"hello"` (binary) vs `'hello'` (charlist/Erlang), prefer binary
 
-## References
+## When to Load Deeper References
 
-- `references/idioms.md` — Pipeline patterns, comprehensions, recursive patterns
-- `references/protocols-behaviours.md` — Full protocol/behaviour implementations
-- `references/error-handling.md` — With chains, error structs, changeset errors
+- Refining a pipeline, comprehension, or recursive function? → Read `references/idioms.md`
+- Defining a custom protocol or behaviour? → Read `references/protocols-behaviours.md`
+- Designing error flow with `with` chains, error structs, or changeset errors? → Read `references/error-handling.md`

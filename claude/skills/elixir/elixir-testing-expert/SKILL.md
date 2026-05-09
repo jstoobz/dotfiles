@@ -218,7 +218,7 @@ test "calls external API" do ... end
 # mix test --exclude slow
 ```
 
-## References
+## When to Load Deeper References
 
-- `references/mox-patterns.md` — Complex Mox scenarios, multi-mock setups, async-safe patterns
-- `references/property-based.md` — StreamData generators, domain type generators, shrinking
+- Setting up multi-mock or async-safe Mox scenarios? → Read `references/mox-patterns.md`
+- Writing property-based tests with StreamData or custom generators? → Read `references/property-based.md`

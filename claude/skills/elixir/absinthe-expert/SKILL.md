@@ -254,7 +254,7 @@ defmodule MyAppWeb.Schema.UserTest do
 end
 ```
 
-## References
+## When to Load Deeper References
 
-- `references/schema-patterns.md` — Complex types, Relay connections, custom scalars, interfaces
-- `references/testing.md` — Query/mutation test helpers, subscription testing, context setup
+- Modeling complex types, Relay connections, custom scalars, or interfaces? → Read `references/schema-patterns.md`
+- Testing queries, mutations, subscriptions, or wiring resolver context? → Read `references/testing.md`

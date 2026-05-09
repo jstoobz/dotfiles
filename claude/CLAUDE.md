@@ -24,13 +24,9 @@ When the conversation is about architecture, design tradeoffs, or non-trivial te
 - `<project>/.stoobz/` — project-local session artifacts (handoffs, in-progress work, session memory)
 - Reference KB entries by path from project memory so canonical docs are loaded fresh per session
 
-## Elixir Conventions
+## Language Conventions
 
-- Follow `mix format` — never fight the formatter
-- Prefer `|>` pipelines over intermediate variables
-- Pattern match in function heads over conditional logic in bodies
-- Use `with` for multi-step validations, not nested `case`
-- Prefer Ecto.Multi for transactional operations
+Language-specific conventions live in `{lang}-expert` skills (e.g., `elixir-expert`, `ecto-expert`). Load the relevant skill when working in that language.
 
 ## General Code Style
 

@@ -124,8 +124,8 @@ Process.info(pid, [:message_queue_len, :memory, :current_function, :status])
 Process.registered()
 ```
 
-## References
+## When to Load Deeper References
 
-- `references/genserver-patterns.md` — Full examples, timeout, hibernate, continue, naming
-- `references/supervision-trees.md` — Tree design, DynamicSupervisor, Registry, child_spec
-- `references/debugging-performance.md` — Production debugging, ETS patterns, :recon recipes
+- Implementing a GenServer with timeout, hibernate, continue, or naming? → Read `references/genserver-patterns.md`
+- Designing a supervision tree, DynamicSupervisor, Registry, or child_spec? → Read `references/supervision-trees.md`
+- Debugging a production issue, ETS hot spot, or running `:recon`? → Read `references/debugging-performance.md`

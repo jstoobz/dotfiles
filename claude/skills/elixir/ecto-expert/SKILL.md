@@ -186,7 +186,7 @@ end)
 # GOOD: from(u in User, preload: [:posts]) |> Repo.all()
 ```
 
-## References
+## When to Load Deeper References
 
-- `references/queries-advanced.md` — Window functions, CTEs, lateral joins, dynamic queries
-- `references/migrations.md` — Zero-downtime migrations, rollback patterns, data migrations
+- Writing window functions, CTEs, lateral joins, or dynamic queries? → Read `references/queries-advanced.md`
+- Planning a zero-downtime migration, rollback, or data backfill? → Read `references/migrations.md`

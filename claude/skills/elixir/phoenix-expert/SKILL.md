@@ -174,7 +174,7 @@ defmodule MyApp.Release do
 end
 ```
 
-## References
+## When to Load Deeper References
 
-- `references/plugs-middleware.md` — Custom plug examples, Conn manipulation, pipeline design
-- `references/configuration.md` — Runtime config patterns, endpoint config, PubSub setup
+- Writing a custom plug or shaping a request pipeline? → Read `references/plugs-middleware.md`
+- Wiring runtime env, endpoint config, or PubSub for an environment? → Read `references/configuration.md`
