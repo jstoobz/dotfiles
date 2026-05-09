@@ -88,7 +88,8 @@ find "$DOTFILES_SKILLS" -name "SKILL.md" -type f | sort | while read -r skill_fi
 done
 
 # Also link top-level .md files (session-kit.md, etc.)
-find "$DOTFILES_SKILLS" -maxdepth 2 -name "*.md" -not -name "SKILL.md" -not -name "CLAUDE.md" -type f | sort | while read -r md_file; do
+# Underscore-prefixed files (e.g. _TEMPLATE.md) are treated as internal/private and skipped.
+find "$DOTFILES_SKILLS" -maxdepth 2 -name "*.md" -not -name "SKILL.md" -not -name "CLAUDE.md" -not -name "_*" -type f | sort | while read -r md_file; do
   md_name="$(basename "$md_file")"
   target="${CLAUDE_SKILLS}/${md_name}"
 
