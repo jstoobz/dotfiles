@@ -182,11 +182,18 @@ def mount(%{"id" => id}, _session, socket) do
   socket =
     socket
     |> assign(:id, id)
-    |> assign_async(:user, fn -> {:ok, %{user: Accounts.get_user!(id)}} end)
+    |> assign_async(:user, fn ->
+      case Accounts.get_user(id) do
+        nil -> {:error, :not_found}
+        user -> {:ok, %{user: user}}
+      end
+    end)
 
   {:ok, socket}
 end
 ```
+
+**Rule:** The function must return `{:ok, %{key: value}}` on success or `{:error, reason}` on failure. The `<.async_result>` `:failed` slot receives the error reason and renders accordingly.
 
 ```heex
 <.async_result :let={user} assign={@user}>
@@ -279,7 +286,14 @@ let Hooks = {}
 Hooks.Map = {
   mounted() {
     this.map = initMap(JSON.parse(this.el.dataset.coords))
+
+    // Server → client: receive events pushed from LiveView
     this.handleEvent("recenter", ({lat, lng}) => this.map.panTo([lat, lng]))
+
+    // Client → server: send events that fire LiveView's handle_event/3
+    this.map.on("click", (e) => {
+      this.pushEvent("marker-clicked", {lat: e.latlng.lat, lng: e.latlng.lng})
+    })
   },
   destroyed() { this.map.remove() }
 }
@@ -287,11 +301,16 @@ let liveSocket = new LiveSocket("/live", Socket, {hooks: Hooks, ...})
 ```
 
 ```elixir
-# Push event from LiveView to hook
+# Server → client
 push_event(socket, "recenter", %{lat: 37.7, lng: -122.4})
+
+# Client → server (handle_event/3 catches the pushEvent above)
+def handle_event("marker-clicked", %{"lat" => lat, "lng" => lng}, socket) do
+  {:noreply, assign(socket, :selected, {lat, lng})}
+end
 ```
 
-**Rule:** Hooks must have a unique `id` and a registered name in `Hooks` on the JS side. `mounted/updated/destroyed/disconnected/reconnected` are the lifecycle callbacks.
+**Rule:** Hooks must have a unique `id` and a registered name in `Hooks` on the JS side. `mounted/updated/destroyed/disconnected/reconnected` are the lifecycle callbacks. Use `pushEvent` for client→server, `handleEvent` for server→client.
 
 ## Anti-patterns
 
@@ -362,7 +381,7 @@ assign(socket, :worker_pid, pid)
 
 - **Mount runs twice** — once on HTTP (cold), once on WS connect. Guard expensive setup with `if connected?(socket), do: ...`. PubSub subscriptions belong inside the guard.
 - **`temporary_assigns` is mostly superseded** — streams handle the "don't keep this in memory" use case better. Reach for `temporary_assigns` only for non-collection data you explicitly want to drop after render.
-- **Streams don't preserve insertion order on append** — `stream_insert/4` appends by default. Use `at: 0` for prepend, or sort server-side and reset.
+- **Stream updates don't reorder items** — `stream_insert/4` matches existing items by `dom_id` and updates them *in place*. If you want a freshly-updated post to jump to the top, you must `stream_delete` and `stream_insert(..., at: 0)`. There's no auto-sort by field — order is whatever you inserted.
 - **`handle_params/3` fires on every URL change** including `push_patch` from the same LiveView. Don't put expensive work there without checking what actually changed.
 - **HEEx attribute syntax: `:if` and `:for`** (since 0.18) is preferred over `<%= if/for %>`. Cleaner and more debuggable.
 - **`~p` requires `Phoenix.VerifiedRoutes` import** — usually wired into `use MyAppWeb, :live_view`. If you get "undefined sigil ~p" you're missing the import.
