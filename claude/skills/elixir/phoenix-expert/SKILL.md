@@ -473,7 +473,7 @@ defmodule MyAppWeb.UserView do
 end
 ```
 
-**Why it bites:** `Phoenix.View` is removed in modern Phoenix. New projects don't generate it. Mixed-style codebases get confusing fast — half the responses go through Views, half through JSON modules.
+**Why it bites:** `Phoenix.View`-style modules are legacy in Phoenix 1.7+. New projects don't generate them, and the JSON/HTML module pattern is the recommended path forward. Mixed-style codebases get confusing fast — half the responses go through Views, half through JSON modules — and onboarding suffers.
 
 **Instead:** Use plain `MyAppWeb.UserJSON` or `MyAppWeb.UserHTML` modules with regular functions on assigns. Controllers `render(conn, :show, user: user)` calls `UserJSON.show(%{user: user})` directly.
 
@@ -510,13 +510,13 @@ end
 
 ## Common Gotchas
 
-- **`~p` requires `Phoenix.VerifiedRoutes` import** — typically wired into `use MyAppWeb, :controller` and `use MyAppWeb, :live_view`. If you see "undefined sigil ~p" in a custom module, you're missing the import.
+- **`~p` requires verified-routes setup in the module** — typically wired into `use MyAppWeb, :controller` and `use MyAppWeb, :live_view` via project macros, but custom modules need `use MyAppWeb, :verified_routes` (or equivalent `import Phoenix.VerifiedRoutes` setup). Exact wiring varies by app structure. If you see "undefined sigil ~p" in a custom module, that's the missing piece.
 - **`config/config.exs` and `config/<env>.exs` are compile-time** — `System.get_env/1` calls in these files read the env at *compile* time, not at boot. The compiled value is frozen into the release. This catches everyone once.
 - **Endpoint plugs run for static assets too** — `Plug.Static` is in the endpoint, so any plug above it runs for `/assets/app.js` requests. Be careful with auth plugs at the endpoint level.
 - **`halt/1` is required to short-circuit** — returning `conn` without `halt(conn)` lets downstream plugs continue. This produces multi-render bugs: response gets sent twice, or the wrong status sticks.
 - **Pipeline order in router matters** — `pipe_through [:browser, :auth]` runs `:browser` first, then `:auth`. Auth that depends on session must come *after* `:fetch_session`.
-- **`Bandit` is the default adapter (since 1.7)** — most Cowboy-era documentation still works, but socket upgrades and `:sec_websocket_protocol` handling differ slightly. If a third-party lib breaks on upgrade, suspect adapter mismatch.
-- **`Phoenix.PubSub` topics are strings, not atoms** — `Phoenix.PubSub.subscribe(MyApp.PubSub, :users)` silently fails to match a `broadcast(MyApp.PubSub, "users", ...)`. Always use the same string both sides.
+- **`Bandit` is the recommended modern adapter** — `mix phx.new` generates Bandit-configured endpoints in current Phoenix, but it's still an explicit endpoint adapter choice (`adapter: Bandit.PhoenixAdapter`), not a universal default. Cowboy-era docs mostly still work, but socket upgrades and `:sec_websocket_protocol` handling differ slightly. If a third-party lib breaks on upgrade, suspect adapter mismatch.
+- **`Phoenix.PubSub` topics are binaries (strings)** — subscribing to `:users` (atom) won't match a `broadcast(MyApp.PubSub, "users", ...)` because the topic identity differs. There's no special "silent fail" in PubSub; subscribers just never receive messages because they're literally listening to a different topic. Pick a string convention and use it on both sides.
 - **Channel processes are per-connection** — every WebSocket client gets its own channel process. State in a channel doesn't shard or share. For shared state, use ETS, a GenServer, or PubSub-driven coordination.
 
 ## Quick Reference
