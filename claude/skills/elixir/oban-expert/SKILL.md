@@ -177,7 +177,7 @@ end)
 |> Repo.transaction()
 ```
 
-**Rule:** Job insertion in a `Multi` is critical — without it, the user might be created but the email job lost (or vice versa) if the surrounding transaction rolls back. Always co-commit the row and the job.
+**Rule:** Job insertion in a `Multi` is critical — without it, the user might be created but the email job lost (or vice versa) if the surrounding transaction rolls back. Always co-commit the row and the job. (See `ecto-expert` for full `Ecto.Multi` composition patterns including dependent steps and error tuple shapes.)
 
 ### Unique jobs
 

@@ -52,7 +52,7 @@ What kind of behavior?
 ├── Reacts to events with new commands across aggregates? → Process Manager
 ├── Builds a queryable read model? → Projection (Commanded.Projections.Ecto)
 ├── Triggers a side effect (email, webhook, notification)? → Event Handler
-├── Runs on a schedule, not in response to an event? → Oban worker (outside Commanded)
+├── Runs on a schedule, not in response to an event? → Oban worker (outside Commanded — see `oban-expert`)
 └── Cross-cutting concern (logging, metrics)? → Commanded middleware
 ```
 

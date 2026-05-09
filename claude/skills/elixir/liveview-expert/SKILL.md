@@ -16,7 +16,7 @@ targets:
 - Touching `mount/3`, `handle_event/3`, `handle_info/3`, or `handle_params/3`
 - Working with `stream/3`, `assign_async/3`, or migrating away from `temporary_assigns`
 - Setting up `live_session`, JS hooks, file uploads, or LiveView-side navigation
-- Skip this skill when working on plain Phoenix controllers or JSON APIs (use `phoenix-expert`)
+- Skip this skill when working on plain Phoenix controllers or JSON APIs (use `phoenix-expert`). For LiveView-specific test patterns (`Phoenix.LiveViewTest`, `render_click`, `has_element?`, `file_input`), see `elixir-testing-expert`.
 
 ## Mental Model
 
