@@ -409,7 +409,7 @@ end
 field :organization, :organization, resolve: dataloader(MyApp.Accounts)
 ```
 
-Always reach for Dataloader on associations. Inline Repo is only acceptable for single-result root queries.
+Inline `Repo` is only acceptable for **root-level single-entity queries** (e.g., `user(id: "123")`) where there's no list to iterate. For any field that resolves an association — or any field reached *through* a list — always reach for Dataloader.
 
 ### Don't: return `{:ok, nil}` when you mean `{:error, _}`
 
