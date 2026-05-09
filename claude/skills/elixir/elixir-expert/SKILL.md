@@ -171,7 +171,7 @@ JSON.encode!(%{name: "Ada", age: 36})
 :json.encode(%{ok: true})
 ```
 
-**Rule:** Reach for the built-in `JSON` module for new code. Existing apps using `Jason` keep working — switching is optional, not urgent. Stick with one library per project.
+**Rule:** The built-in `JSON` (Elixir 1.18+) and Erlang's `:json` (OTP 27+) are still new — much of the ecosystem still depends on `Jason`, so real projects often end up running both during the transition. For greenfield code with no `Jason` deps, prefer the built-in. For projects already on `Jason`, switching is optional, not urgent. Stick with one primary library per project.
 
 ### `Mix.install/2` for one-shot scripts
 
@@ -339,11 +339,11 @@ data
 - **Large binaries — sub-binaries reference the parent** — slicing a 100MB binary into a 10-byte slice keeps the whole 100MB alive. Use `:binary.copy/1` to detach the slice.
 - **`DateTime` vs `NaiveDateTime`** — always store UTC, convert at the boundary. `NaiveDateTime` has no zone and silently drifts. Phoenix and Ecto default to `DateTime` for good reason.
 - **`Decimal` for money, never Float** — IEEE-754 binary floats can't represent `0.1` exactly. Use `Decimal` for any value where precision matters.
-- **String vs charlist** — `"hello"` is a UTF-8 binary; `~c"hello"` is a charlist (Erlang convention). Erlang libraries usually want charlists; Elixir prefers binaries. The compiler now warns on charlist string literals so they don't sneak in.
+- **String vs charlist** — `"hello"` is a UTF-8 binary; `~c"hello"` is a charlist (Erlang convention). Erlang libraries usually want charlists; Elixir prefers binaries. The `~c` sigil is now the required form for charlist literals; the old `'hello'` syntax is deprecated.
 - **`Map.update!/3` raises on missing key, `Map.update/4` doesn't** — easy to miss. The bang version is for "key MUST exist or it's a bug"; the non-bang version takes a default.
 - **`%{}` pattern matches ANY map** — `case x do %{} -> :map; _ -> :other end` matches any map including ones with no keys. To require an empty map, check `map_size(x) == 0`.
 - **`Duration` (1.17+) is not interchangeable with integer seconds** — adding a `Duration` to a `DateTime` works; passing a `Duration` where seconds are expected does not.
-- **Set-theoretic type warnings show up at compile time only** — they don't run during normal app boot. CI must run `mix compile --warnings-as-errors` to enforce them.
+- **Set-theoretic type checking is static (compile-time), not runtime** — every `mix compile` runs the type pass and surfaces warnings; nothing happens at app boot. CI should use `mix compile --warnings-as-errors` to *enforce* (not just emit) the warnings.
 
 ## Quick Reference
 
