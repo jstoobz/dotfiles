@@ -9,11 +9,12 @@ See `.stoobz/skill-template.md` (decision record) and `.stoobz/elixir-skills-rec
 ## Conventions
 
 - **Section order is fixed.** Skip optional sections, but never reorder.
-- **Decision trees** use `## Decision Tree: <Topic>` prefix and ASCII tree-shaped layout.
+- **Decision trees** use `## Decision Tree: <Topic>` prefix and ASCII tree-shaped layout. The strongest trees ask "where does X belong?" or "what's the scope of X?" — scope-based questions force concrete answers rooted in system boundaries. Taxonomy trees ("what kind of X?") are still useful but derivative.
 - **All code examples** use `MyApp` / `MyAppWeb` namespace.
 - **Anti-patterns** show *wrong code that looks right* — paired with reasoning + correct alternative.
 - **Common Gotchas** show *correct code with surprising behavior* — kept separate from anti-patterns intentionally.
-- **`targets:` frontmatter** pins versions so stale skills surface in future audits. Bump when the floor moves.
+- **Cross-skill references go inline.** When a code example uses concepts from another skill's domain, drop a parenthetical pointer like `(see ecto-expert for changeset patterns)` next to the code that needs it. The "When to Load Deeper References" section is for *within-skill* depth, not *cross-skill* pointers.
+- **`targets:` frontmatter** pins versions so stale skills surface in future audits. Bump when the floor moves. Use semver-ish strings (`"1.18+"`) when you can pin precisely; use prose (`"matches selected nerves_system_* (commonly 26+)"`) when ecosystem support is genuinely variable. Honest prose beats misleading semver.
 
 ---
 
@@ -38,7 +39,7 @@ targets:
 - {{Concrete signal 1}}
 - {{Concrete signal 2}}
 - {{Concrete signal 3}}
-- {{Optional negative trigger: "Skip this skill when..."}}
+- **Strongly recommended — negative trigger:** "Skip this skill when... (use `{{sibling-expert}}`)" — explicit exclusion prevents Claude from loading the wrong skill in crowded ecosystems (Phoenix/LiveView, Ecto/Commanded, etc.)
 
 ## Mental Model
 
@@ -164,5 +165,7 @@ end
 ## Versioning convention
 
 The `targets:` map uses string values (quoted because `1.8+` isn't a valid YAML number). Map structure is intentionally minimal-but-extensible — values can grow into objects later (e.g., `min:` / `max:` / `notes:`) without breaking parsers.
+
+**Prose values are allowed** when ecosystem support is genuinely variable. For example, `nerves-expert` uses `otp: "matches selected nerves_system_* (commonly 26+)"` because OTP support depends on the chosen Nerves system package, and forcing a specific semver pin would be misleading. Honest prose beats fake precision.
 
 Bump `targets:` when the version floor moves, and audit code samples for new idioms in the same pass.
