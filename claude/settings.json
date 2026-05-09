@@ -2,7 +2,9 @@
   "cleanupPeriodDays": 90,
   "env": {
     "API_TIMEOUT_MS": "3000000",
-    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "70"
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "70",
+    "DISABLE_AUTOUPDATER": "1",
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "0"
   },
   "attribution": {
     "commit": "",
@@ -62,19 +64,6 @@
       "Bash(git clean -f *)"
     ]
   },
-  "model": "claude-opus-4-6",
-  "worktree": {
-    "symlinkDirectories": [
-      "node_modules",
-      "deps",
-      "_build",
-      ".elixir_ls"
-    ]
-  },
-  "effortLevel": "medium",
-  "showThinkingSummaries": true,
-  "skipDangerousModePermissionPrompt": true,
-  "theme": "dark-ansi",
   "hooks": {
     "SessionStart": [
       {
@@ -86,5 +75,21 @@
         ]
       }
     ]
-  }
+  },
+  "worktree": {
+    "symlinkDirectories": [
+      "node_modules",
+      "deps",
+      "_build",
+      ".elixir_ls"
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash $HOME/.claude/statusline-command.sh"
+  },
+  "effortLevel": "high",
+  "showThinkingSummaries": true,
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "dark-ansi"
 }
