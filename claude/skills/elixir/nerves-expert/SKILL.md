@@ -4,7 +4,7 @@ description: Nerves embedded/IoT patterns including host-vs-target builds, Circu
 targets:
   elixir: "1.18+"
   nerves: "1.11+"
-  otp: "27+"
+  otp: "matches selected nerves_system_* (commonly 26+)"
 ---
 
 # Nerves Expert
@@ -22,7 +22,7 @@ targets:
 
 - **Nerves is not "Elixir on Linux"** — it's a stripped-down embedded Linux where the BEAM is essentially PID 1. There's no shell, no package manager, no systemd. Your release IS the system.
 - **Host vs Target are two different builds.** `MIX_TARGET=host` gives you a normal Elixir app on your dev machine (with hardware shims). `MIX_TARGET=rpi4` (or similar) cross-compiles for the device. Same code, different deps and config.
-- **The filesystem is mostly read-only.** `/data` (or `/root` on some systems) is the only writable partition that persists across firmware updates. Everything else is replaced wholesale on update.
+- **The filesystem is mostly read-only.** Assume `/data` is your only durable writable location. Some systems also expose a writable `/root`, but that's board-specific and non-portable — design around `/data`. Everything else is replaced wholesale on firmware update.
 - **Firmware is atomic.** A "deploy" is the entire OS + BEAM + your release packaged as a single `.fw` artifact (typically 30-100MB). You don't push files; you flash or upload firmware.
 - **A/B partitioning gives you safe updates.** New firmware writes to the inactive partition. Reboot switches active. Failed boot reverts. This is what makes OTA updates safe in the field.
 
@@ -73,14 +73,16 @@ What kind of peripheral?
 ## Decision Tree: Where Does State Persist?
 
 ```
-What's the lifetime of this data?
-├── Process memory only, lost on restart? → Agent / GenServer state
-├── Survives BEAM restart, lost on firmware update? → /tmp or RAM-backed FS
-├── Survives firmware updates? → /data partition (writable, persistent)
-│   └── Examples: device-specific config, calibration data, captured logs
-├── Set at provisioning, never changes? → /root or burn into firmware
-├── Sent to cloud/fleet, queryable across devices? → NervesHub or your own backend
-└── Sensitive (keys, certs)? → /data with proper file perms; consider TPM if hardware supports
+What's the scope of persistence you need?
+├── Process memory only (lost on restart)? → Agent / GenServer state
+├── Runtime scratch — across BEAM restarts but lost on reboot? → /tmp (tmpfs, RAM-backed)
+│   └── Use sparingly; prefer rebuilding from durable sources on restart
+├── Durable local — across reboots AND firmware updates? → /data partition
+│   └── Examples: device-specific config, calibration data, paired credentials, captured logs
+├── Baked into the firmware (set at build, immutable on device)? → config/ + priv/ (read-only)
+│   └── Examples: model number, certificate authorities, default config
+├── Fleet-wide / cloud-queryable? → NervesHub or your own backend
+└── Sensitive (private keys, device certs)? → /data with restrictive file perms; TPM/ATECC608 if hardware supports
 ```
 
 ## Decision Tree: How To Deploy An Update
@@ -188,6 +190,7 @@ end
 ```elixir
 defmodule MyDevice.LedController do
   use GenServer
+  require Logger
   alias Circuits.GPIO
 
   def start_link(opts), do: GenServer.start_link(__MODULE__, opts, name: __MODULE__)
@@ -226,6 +229,7 @@ end
 ```elixir
 defmodule MyDevice.Sensors.TempSensor do
   use GenServer
+  import Bitwise
   alias Circuits.I2C
 
   def read_temp, do: GenServer.call(__MODULE__, :read_temp)
@@ -294,6 +298,8 @@ MIX_TARGET=rpi4 mix firmware
 MIX_TARGET=rpi4 mix upload nerves.local
 # Device reboots into new firmware via A/B partition swap
 ```
+
+**Rule:** `mix upload` is a bench/dev convenience for the device on your desk — same network, SSH-reachable, you control it. The operational deploy model for fielded fleets is NervesHub (or an equivalent OTA path with signed firmware and rollout control). Never plan production rollouts around `mix upload`.
 
 ## Anti-patterns
 
