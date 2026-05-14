@@ -16,25 +16,26 @@
   "security.workspace.trust.untrustedFiles": "open",
 
   "[elixir]": {
-    "editor.defaultFormatter": "elixir-lsp.elixir-ls"
+    "editor.defaultFormatter": "elixir-lsp.elixir-ls",
   },
   "[phoenix-heex]": {
-    "editor.defaultFormatter": "elixir-lsp.elixir-ls"
+    "editor.defaultFormatter": "elixir-lsp.elixir-ls",
   },
   "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
   "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
   "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
   "[html]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
 
   "elixirLS.dialyzerEnabled": true,
   "elixirLS.fetchDeps": false,
-  "elixirLS.suggestSpecs": true
+  "elixirLS.suggestSpecs": true,
+  "markdown.preview.linkify": false,
 }
