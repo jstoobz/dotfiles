@@ -1,0 +1,115 @@
+#!/usr/bin/env bash
+# install-portable-refs-hook — retrofit a git repo with the
+# portable-references pre-commit hook from the operator's git init
+# template directory.
+#
+# Use this for repos that already exist (and therefore missed the
+# template at git init time). For new repos, init.templateDir handles
+# installation automatically.
+#
+# See convention "portable-references" in the operator's kb.
+
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+install-portable-refs-hook — copy the portable-references pre-commit
+hook into an existing git repo's .git/hooks/ directory.
+
+USAGE
+  install-portable-refs-hook [REPO] [--force] [-h|--help]
+
+ARGUMENTS
+  REPO     Path to a git repo (or any path inside one). Defaults to cwd.
+
+OPTIONS
+  --force  Overwrite an existing, differing pre-commit hook. The
+           previous file is backed up to <dest>.bak first.
+  -h, --help  Print this usage.
+
+SOURCE
+  $(git config --get init.templateDir)/hooks/pre-commit
+
+DESTINATION
+  <repo-toplevel>/.git/hooks/pre-commit
+
+BEHAVIOR
+  destination missing         -> copy + chmod +x, exit 0 ("installed")
+  destination already matches  -> no-op, exit 0 ("already-installed")
+  destination differs          -> warn, exit 1 (rerun with --force)
+  --force + destination differs -> back up to .bak, then install
+  not in a git repo            -> exit 1
+
+The hook self-no-ops when $PORTABLE_REFS_BLOCKLIST is unset, so it is
+safe to install everywhere even before adopting the framework.
+EOF
+}
+
+force=0
+target=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -h|--help) usage; exit 0 ;;
+    --force) force=1 ;;
+    --) shift; break ;;
+    -*) echo "install-portable-refs-hook: unknown flag: $1" >&2; usage >&2; exit 2 ;;
+    *)
+      if [ -n "$target" ]; then
+        echo "install-portable-refs-hook: too many positional arguments" >&2
+        exit 2
+      fi
+      target="$1"
+      ;;
+  esac
+  shift
+done
+
+# Resolve target repo's toplevel.
+if [ -n "$target" ]; then
+  if [ ! -e "$target" ]; then
+    echo "install-portable-refs-hook: path does not exist: $target" >&2
+    exit 1
+  fi
+  cd "$target"
+fi
+toplevel="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+if [ -z "$toplevel" ]; then
+  echo "install-portable-refs-hook: not inside a git repo (cwd or REPO arg)" >&2
+  exit 1
+fi
+
+# Resolve source hook from init.templateDir.
+template_dir="$(git config --get init.templateDir 2>/dev/null || true)"
+if [ -z "$template_dir" ]; then
+  echo "install-portable-refs-hook: init.templateDir not configured" >&2
+  echo "  set it with: git config --global init.templateDir ~/.dotfiles/git/template" >&2
+  exit 1
+fi
+template_dir="${template_dir/#\~/$HOME}"
+src="$template_dir/hooks/pre-commit"
+if [ ! -f "$src" ]; then
+  echo "install-portable-refs-hook: template hook not found at $src" >&2
+  exit 1
+fi
+
+dest="$toplevel/.git/hooks/pre-commit"
+
+# Already installed?
+if [ -e "$dest" ] || [ -L "$dest" ]; then
+  if cmp -s "$src" "$dest" 2>/dev/null; then
+    echo "already-installed: $dest"
+    exit 0
+  fi
+  if [ "$force" -eq 0 ]; then
+    echo "install-portable-refs-hook: $dest exists and differs from template" >&2
+    echo "  rerun with --force to overwrite (existing hook will be backed up to $dest.bak)" >&2
+    exit 1
+  fi
+  cp -P "$dest" "$dest.bak"
+  echo "backed up existing hook to $dest.bak" >&2
+fi
+
+mkdir -p "$(dirname "$dest")"
+cp "$src" "$dest"
+chmod +x "$dest"
+echo "installed: $dest"
