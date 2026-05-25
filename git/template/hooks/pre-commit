@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+# portable-references pre-commit hook
+#
+# Generic, env-driven enforcement for the portable-references convention:
+# a reference inside a shipped artifact must resolve for any reader, not
+# only the author. Staged additions that reference operator-private path
+# prefixes are flagged here so the leak never lands.
+#
+# Behavior:
+#   - exit 0 silently if $PORTABLE_REFS_BLOCKLIST is empty or unset
+#   - exit 0 silently if the cwd repo's toplevel sits inside any blocked
+#     prefix (operator-private surface; the rule fires at the boundary)
+#   - else grep staged additions against three forms of each blocklist
+#     entry (literal, $HOME-prefixed, ~/-prefixed); on hit, fail with a
+#     one-line pointer to the convention by name
+#
+# $HOME is read at runtime — the hook itself is operator-agnostic and
+# safe to ship anywhere. Convention: "portable-references" in the
+# operator's kb.
+
+set -eu
+
+[ -z "${PORTABLE_REFS_BLOCKLIST:-}" ] && exit 0
+
+IFS=: read -ra prefixes <<< "$PORTABLE_REFS_BLOCKLIST"
+
+# Self-disable inside operator-private surfaces.
+toplevel="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+if [ -n "$toplevel" ]; then
+  toplevel_slashed="$toplevel/"
+  for p in "${prefixes[@]}"; do
+    [ -z "$p" ] && continue
+    p_slashed="${p%/}/"
+    case "$toplevel_slashed" in
+      "$p_slashed"*) exit 0 ;;
+    esac
+  done
+fi
+
+# Build three forms per entry: literal, $HOME-prefixed, ~/-prefixed.
+# Escape grep -E specials with bash substitution (BSD-sed safe).
+escape_re() {
+  local s="$1"
+  s="${s//\\/\\\\}"
+  s="${s//./\\.}"
+  s="${s//\$/\\\$}"
+  s="${s//\^/\\^}"
+  s="${s//\*/\\*}"
+  s="${s//+/\\+}"
+  s="${s//\?/\\?}"
+  s="${s//(/\\(}"
+  s="${s//)/\\)}"
+  s="${s//\{/\\{}"
+  s="${s//\}/\\\}}"
+  s="${s//\|/\\|}"
+  s="${s//\[/\\[}"
+  s="${s//]/\\]}"
+  printf '%s' "$s"
+}
+
+home="$HOME"
+alts=()
+for p in "${prefixes[@]}"; do
+  [ -z "$p" ] && continue
+  case "$p" in
+    "$home"/*)
+      tail="${p#"$home"}"
+      forms=("$p" "\$HOME$tail" "~$tail")
+      ;;
+    *)
+      forms=("$p")
+      ;;
+  esac
+  for f in "${forms[@]}"; do
+    alts+=("$(escape_re "$f")")
+  done
+done
+
+[ "${#alts[@]}" -eq 0 ] && exit 0
+
+pattern="$(printf '%s\n' "${alts[@]}" | awk '!seen[$0]++' | paste -sd '|' -)"
+
+# Check only added content lines (^+ but not the +++ filename header).
+if git diff --cached --diff-filter=ACM -U0 \
+    | grep -E '^\+[^+]' \
+    | grep -Eq -- "$pattern"; then
+  echo "portable-references: staged content references operator-private paths — rewrite to cite by named pattern + public prior art (convention: 'portable-references' in the operator's kb)." >&2
+  exit 1
+fi
+
+exit 0
