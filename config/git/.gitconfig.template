@@ -11,6 +11,7 @@
 	pager = delta
 [init]
 	defaultBranch = main
+	templateDir = __HOME_DIR__/.dotfiles/git/template
 [interactive]
 	diffFilter = delta --color-only
 [delta]
