@@ -32,7 +32,7 @@ A reference inside a shipped artifact (skill markdown, code, README, committed d
 
 - **Operator-private prefixes (blocked in shipped artifacts):** `~/.stoobz/kb/`, `~/.dotfiles/.stoobz/`
 - **Public contracts (allowed):** `~/.stoobz/sessions/`, `~/.stoobz/manifest.json`, `<project>/.stoobz/`
-- **Enforcement:** a pre-commit hook reads `$PORTABLE_REFS_BLOCKLIST` (colon-separated path prefixes; set in `~/.zshrc_local`) and matches three forms per entry — literal, `$HOME`-prefixed, `~/`-prefixed. The hook self-no-ops when the env var is unset, or inside repos whose toplevel sits under a blocked prefix.
+- **Enforcement:** a pre-commit hook reads `$PORTABLE_REFS_BLOCKLIST` (colon-separated path prefixes; set in `~/.zshrc.local`) and matches three forms per entry — literal, `$HOME`-prefixed, `~/`-prefixed. The hook self-no-ops when the env var is unset, or inside repos whose toplevel sits under a blocked prefix.
 - **Installation:** `init.templateDir = ~/.dotfiles/git/template` auto-installs the hook into every repo created via `git init` or `git clone`. Retrofit existing repos with `install-portable-refs-hook` (lives in `~/.dotfiles/bin/`, symlinked into `~/.local/bin/`; idempotent; `--help` for usage).
 - **Known limitation:** git hooks inherit the env of the process invoking `git commit`. IDE / GUI clients launched without shell init don't see `$PORTABLE_REFS_BLOCKLIST` and bypass enforcement. Accepted — the operator's commit path is overwhelmingly terminal-from-Claude-Code.
 
