@@ -6,6 +6,23 @@
 - Lead with the answer or action, then explain if needed
 - Use tables for comparisons, code blocks for examples
 
+## First Principles
+
+Terse heuristics to keep at the forefront while problem-solving and building. Analogies are high-density context — a 30-character moniker carries what three paragraphs would.
+
+- **Understand before solving.** Diagnose the problem in its system's context before proposing a fix — no raw SQL at a CQRS projection, no performance fix without instrumentation. You can't fix what you don't understand; you can't fix what you can't observe. Haste to a decision matters only when the production database is already dropped.
+- **Maps > mazes.** Aerial view before movement — strategic over reactive.
+- **Trenches > holes.** Dig durable paths, not throwaway pits.
+- **Compounds > consumes.** Prefer the decision that compounds over the one that consumes the day.
+- **Do one thing well.** Scope-specific, composable, cooperative tools over omni-tools; no functionality before a justified, in-scope need. (Full treatment in **Architectural Lens** below.)
+- **Rip it and ship it.** Start, then iterate on real usage — the perfect platform never arrives. Tread carefully only at foundational layers where rework compounds.
+
+## Architectural Lens
+
+Each surface (function, doc, repo, skill, session) optimizes for one audience or one responsibility; composition happens between surfaces, never by mixing concerns within one. When you encounter a mixed-purpose surface, name the relevant pattern — **Diátaxis** (docs by audience), **sidecar** (repos by concern), **thin-orchestrator** (skills vs scripts), **FP pipelines** (functions by composition) — and propose the split, don't paper over it. The principle is a default, not absolutism: scope where separation is warranted is case-by-case (a small file crossing concerns is fine; a 200-line mixed-purpose script usually isn't). See the `composable-units` convention in the operator's kb for the full pattern catalog and "when not to split" nuance.
+
+Documentation routes the same way, on **lifecycle coupling**: code is the source of truth for the system as it is; present-tense reference/how-to ships in the repo, long-lived rationale (ADRs, decisions, tradeoffs) lives in the kb and **never in a tool repo**. The repo stays present-tense; rationale earns the kb or dies in thought. Commits carry *what changed* plus only the why code can't express, not narrative; a `docs/adr/` tree is premature apparatus (and a propagating precedent) until n=2.
+
 ## Architectural & Design Discussions
 
 When the conversation is about architecture, design tradeoffs, or non-trivial technical decisions (not implementation), shift mode:
@@ -23,6 +40,7 @@ When the conversation is about architecture, design tradeoffs, or non-trivial te
 - `~/.stoobz/kb/` — cross-project, durable architectural knowledge (ADRs, decision trees, named patterns). **Operator-private** — never referenced by path from a shipped artifact.
 - `<project>/.stoobz/` — project-local session artifacts (handoffs, in-progress work, session memory).
 - From operator-private surfaces only (project memory, context loaders, files under `~/.claude/` or `~/.stoobz/kb/`), reference KB entries by path so canonical docs are loaded fresh per session. From shipped artifacts (anything in a git repo whose commits leave this machine), see **Boundaries** below — cite by name, not path.
+- **Load-bearing KB entries to pull during design/planning** — named here so they surface *before* a decision, not after (patterns and decision trees have weak triggers otherwise): conventions `composable-units`, `portable-references`, `diataxis`; patterns `snapshot-immutable-runs`, `wal-for-artifacts`, `python-cli-starter`; decision trees `where-to-place-the-contract`. Read the specific file when its decision is in play — don't act on this summary alone.
 
 ## Boundaries
 
