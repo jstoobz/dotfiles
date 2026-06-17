@@ -38,4 +38,5 @@
   "elixirLS.fetchDeps": false,
   "elixirLS.suggestSpecs": true,
   "markdown.preview.linkify": false,
+  "workbench.editor.enablePreviewFromCodeNavigation": true,
 }
