@@ -1,5 +1,6 @@
 {
   "cleanupPeriodDays": 90,
+  "disableClaudeAiConnectors": true,
   "env": {
     "API_TIMEOUT_MS": "3000000",
     "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "70",
