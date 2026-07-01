@@ -10,6 +10,10 @@
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
 
+  "files.exclude": {
+    "**/.git": false,
+  },
+
   "terminal.integrated.scrollback": 1000000,
 
   "extensions.ignoreRecommendations": true,
