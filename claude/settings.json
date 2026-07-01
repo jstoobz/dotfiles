@@ -1,6 +1,5 @@
 {
-  "cleanupPeriodDays": 90,
-  "disableClaudeAiConnectors": true,
+  "cleanupPeriodDays": 270,
   "env": {
     "API_TIMEOUT_MS": "3000000",
     "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "70",
@@ -65,6 +64,7 @@
       "Bash(git clean -f *)"
     ]
   },
+  "disableClaudeAiConnectors": true,
   "hooks": {
     "SessionStart": [
       {
@@ -78,18 +78,14 @@
     ]
   },
   "worktree": {
-    "symlinkDirectories": [
-      "node_modules",
-      "deps",
-      "_build",
-      ".elixir_ls"
-    ]
+    "symlinkDirectories": ["node_modules", "deps", "_build", ".elixir_ls"]
   },
   "statusLine": {
     "type": "command",
     "command": "bash $HOME/.claude/statusline-command.sh"
   },
   "effortLevel": "high",
+  "tui": "fullscreen",
   "showThinkingSummaries": true,
   "skipDangerousModePermissionPrompt": true,
   "theme": "dark-ansi"
