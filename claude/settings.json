@@ -1,7 +1,7 @@
 {
   "cleanupPeriodDays": 270,
   "env": {
-    "API_TIMEOUT_MS": "3000000",
+    "API_TIMEOUT_MS": "300000",
     "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "70",
     "DISABLE_AUTOUPDATER": "1",
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0"
@@ -37,8 +37,6 @@
       "Bash(jq *)",
       "Bash(brew *)",
       "Bash(python *)",
-      "Bash(* --version)",
-      "Bash(* --help)",
       "Bash(which *)",
       "Bash(ls *)",
       "Bash(cat *)",
@@ -64,8 +62,20 @@
       "Bash(git clean -f *)"
     ]
   },
+  "model": "sonnet",
   "disableClaudeAiConnectors": true,
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.dotfiles/claude/hooks/block-catastrophic-bash.sh"
+          }
+        ]
+      }
+    ],
     "SessionStart": [
       {
         "hooks": [
@@ -78,7 +88,12 @@
     ]
   },
   "worktree": {
-    "symlinkDirectories": ["node_modules", "deps", "_build", ".elixir_ls"]
+    "symlinkDirectories": [
+      "node_modules",
+      "deps",
+      "_build",
+      ".elixir_ls"
+    ]
   },
   "statusLine": {
     "type": "command",
@@ -87,6 +102,6 @@
   "effortLevel": "high",
   "tui": "fullscreen",
   "showThinkingSummaries": true,
-  "skipDangerousModePermissionPrompt": true,
+  "skipDangerousModePermissionPrompt": false,
   "theme": "dark-ansi"
 }
