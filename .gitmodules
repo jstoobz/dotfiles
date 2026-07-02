@@ -4,3 +4,6 @@
 [submodule "claude/vendor/anthropics-skills"]
 	path = claude/vendor/anthropics-skills
 	url = https://github.com/anthropics/skills.git
+[submodule "claude/skills/coordination/patchpad"]
+	path = claude/skills/coordination/patchpad
+	url = git@github.com:jstoobz/patchpad.git
